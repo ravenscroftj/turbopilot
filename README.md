@@ -11,7 +11,7 @@ cd ggml
 mkdir build
 cd build
 cmake ..
-make codegen
+make codegen codegen-quantize
 ```
 
 ## Getting The Models
@@ -24,4 +24,14 @@ Start by downloading either the [2B](https://huggingface.co/moyix/codegen-2B-mul
 python convert-codegen-to-ggml.py ./codegen-6B-multi-gptj 0
 ```
 
-## Build GGML
+## Quantize the model
+
+```bash
+./bin/codegen-quantize ../../codegen-6B-multi-gptj/ggml-model-f32.bin ../../codegen-6B-multi-gptj/ggml-model-quant.bin 2
+```
+
+## Run the model
+
+```bash
+./bin/codegen -t 6 -m ../../codegen-6B-multi-gptj/ggml-model-quant.bin -p "def main("
+```
