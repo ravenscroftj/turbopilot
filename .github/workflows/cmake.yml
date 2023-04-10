@@ -29,4 +29,13 @@ jobs:
         cd ${{github.workspace}}/ggml
         cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D CMAKE_EXE_LINKER_FLAGS="-static"
         cd ${{github.workspace}}/ggml/build 
-        make codegen
+        make codegen codegen-serve
+        
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        # Artifact name
+        name: codegen-serve-amd64-linux # optional, default is artifact
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{github.workspace}}/ggml/build/bin/codegen-serve
+        # The desired behavior if no files are found using the provided path.
