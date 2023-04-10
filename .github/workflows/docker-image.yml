@@ -13,6 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    
+    - name: Checkout
+      uses: actions/checkout@v2.7.0
+      with:
+        submodules: true
+
       
     - name: Publish Docker Image to GitHub Registry
       # You may pin to the exact commit or the version.
