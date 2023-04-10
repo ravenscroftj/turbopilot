@@ -20,7 +20,7 @@ COPY --from=build /build/ggml/build/bin/codegen-serve /app/codegen-serve
 
 ENV THREADS=4
 
-ENV MODEL="/models/ggml-model-quant.bin"
+ENV MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin"
 
 COPY ./run.sh /app/
 
