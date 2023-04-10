@@ -1,4 +1,7 @@
-# TurboPilot
+# TurboPilot 🚀
+
+[![CMake](https://github.com/ravenscroftj/turbopilot/actions/workflows/cmake.yml/badge.svg)](https://github.com/ravenscroftj/turbopilot/actions/workflows/cmake.yml) [![Mastodon Follow](https://img.shields.io/mastodon/follow/000117012?domain=https%3A%2F%2Ffosstodon.org%2F&style=social)](https://fosstodon.org/@jamesravey) ![BSD Licensed](https://img.shields.io/github/license/ravenscroftj/turbopilot) ![Time Spent](https://img.shields.io/endpoint?url=https://wakapi.nopro.be/api/compat/shields/v1/jamesravey/all_time/project%3Aturbopilot)
+
 
 TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone which uses the library behind [llama.cpp](https://github.com/comex/llama.cpp) to run the [6 Billion Parameter Salesforce Codegen model](https://github.com/salesforce/CodeGen) in 4GiB of RAM. It is heavily based and inspired by on the [fauxpilot](https://github.com/fauxpilot/fauxpilot) project.
 
@@ -6,7 +9,14 @@ TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone
 
 ![a screen recording of turbopilot running through fauxpilot plugin](assets/screenrecording.gif)
 
-## Getting Started
+## 🤝 Contributing
+
+PRs to this project and the corresponding [GGML fork](https://github.com/ravenscroftj/ggml) are very welcome.
+
+Make a fork, make your changes and then open a [PR](https://github.com/ravenscroftj/turbopilot/pulls).
+
+
+## 👋 Getting Started
 
 The easiest way to try the project out is to grab the pre-processed models and then run the server in docker.
 
@@ -22,7 +32,7 @@ You can download the pre-converted, pre-quantized models from [Google Drive](htt
 
 Follow [this guide](https://github.com/ravenscroftj/turbopilot/wiki/Converting-and-Quantizing-The-Models) if you want to experiment with quantizing the models yourself.
 
-### Running TurboPilot Server
+### ⚙️ Running TurboPilot Server
 
 Download the [latest binary](https://github.com/ravenscroftj/turbopilot/releases) and extract it to the root project folder. If a binary is not provided for your OS or you'd prefer to build it yourself follow the [build instructions](BUILD.md)
 
@@ -40,7 +50,7 @@ If you have a multi-core system you can control how many CPUs are used with the 
 ./codegen-serve -t 6 -m ./models/codegen-6B-multi-ggml-4bit-quant.bin
 ```
 
-### Running From Docker
+### 📦 Running From Docker
 
 You can also run Turbopilot from the pre-built docker image supplied [here](https://github.com/users/ravenscroftj/packages/container/package/turbopilot%2Fturbopilot)
 
@@ -55,7 +65,7 @@ docker run --rm -it \
   ghcr.io/ravenscroftj/turbopilot/turbopilot:latest
 ```
 
-### Using the API
+### 🌐 Using the API
 
 #### Using the API with FauxPilot Plugin
 
@@ -118,7 +128,7 @@ Should get you something like this:
 }
 ```
 
-## Known Limitations
+## 👉 Known Limitations
 
 Again I want to set expectations around this being a proof-of-concept project. With that in mind. Here are some current known limitations.
 
@@ -128,7 +138,8 @@ As of **v0.0.1**:
 - Sometimes suggestions get truncated in nonsensical places - e.g. part way through a variable name or string name. This is due to a hard limit on suggestion length.
 - Sometimes the server will run out of memory and crash. This is because it will try to use everything above your current location as context during generation. I'm working on a fix.
 
-## Acknowledgements
+
+## 👏 Acknowledgements
 
 - This project would not have been possible without [Georgi Gerganov's work on GGML and llama.cpp](https://github.com/ggerganov/ggml)
 - It was completely inspired by [fauxpilot](https://github.com/fauxpilot/fauxpilot) which I did experiment with for a little while but wanted to try to make the models work without a GPU
