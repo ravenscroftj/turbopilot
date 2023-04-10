@@ -12,11 +12,13 @@ The easiest way to try the project out is to grab the pre-processed models and t
 
 ### Getting The Models
 
-#### Direct Download
+You have 2 options for getting the model
+
+#### Option A: Direct Download - Easy, Quickstart
 
 You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing). I've made the `multi` flavour models with 2B and 6B parameters available - these models are pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`
 
-#### Convert The Models Yourself
+#### Option B: Convert The Models Yourself - Hard, More Flexible
 
 Follow [this guide](https://github.com/ravenscroftj/turbopilot/wiki/Converting-and-Quantizing-The-Models) if you want to experiment with quantizing the models yourself.
 
