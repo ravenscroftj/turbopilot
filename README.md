@@ -32,11 +32,84 @@ Run:
 
 The application should start a server on port `18080`
 
+If you have a multi-core system you can control how many CPUs are used with the `-t` option - for example, on my AMD Ryzen 5000 which has 6 cores/12 threads I use:
 
+```bash
+./codegen-serve -t 6 -m ./models/codegen-6B-multi-ggml-4bit-quant.bin
+```
 
+### Using the API
 
+#### Using the API with FauxPilot Plugin
 
+To use the API from VSCode, I recommend the [vscode-fauxpilot](https://github.com/Venthe/vscode-fauxpilot) plugin. Once you install it, you will need to change a few settings in your settings.json file.
 
+- Open settings (CTRL/CMD + SHIFT + P) and select `Preferences: Open User Settings (JSON)`
+- Add the following values:
+
+```json
+{
+    ... // other settings
+
+    "fauxpilot.enabled": true,
+    "fauxpilot.server": "http://localhost:18080/v1/engines",
+}
+```
+
+Now you can enable fauxpilot with `CTRL + SHIFT + P` and select `Enable Fauxpilot`
+
+The plugin will send API calls to the running `codegen-serve` process when you make a keystroke. It will then wait for each request to complete before sending further requests.
+
+#### Calling the API Directly
+
+You can make requests to `http://localhost:18080/v1/engines/codegen/completions` which will behave just like the same Copilot endpoint.
+
+For example:
+
+```bash
+curl --request POST \
+  --url http://localhost:18080/v1/engines/codegen/completions \
+  --header 'Content-Type: application/json' \
+  --data '{
+ "model": "codegen",
+ "prompt": "def main():",
+ "max_tokens": 100
+}'
+```
+
+Should get you something like this:
+
+```json
+{
+ "choices": [
+  {
+   "logprobs": null,
+   "index": 0,
+   "finish_reason": "length",
+   "text": "\n  \"\"\"Main entry point for this script.\"\"\"\n  logging.getLogger().setLevel(logging.INFO)\n  logging.basicConfig(format=('%(levelname)s: %(message)s'))\n\n  parser = argparse.ArgumentParser(\n      description=__doc__,\n      formatter_class=argparse.RawDescriptionHelpFormatter,\n      epilog=__doc__)\n  "
+  }
+ ],
+ "created": 1681113078,
+ "usage": {
+  "total_tokens": 105,
+  "prompt_tokens": 3,
+  "completion_tokens": 102
+ },
+ "object": "text_completion",
+ "model": "codegen",
+ "id": "01d7a11b-f87c-4261-8c03-8c78cbe4b067"
+}
+```
+
+## Known Limitations
+
+Again I want to set expectations around this being a proof-of-concept project. With that in mind. Here are some current known limitations.
+
+As of **v0.0.1**:
+- The models can be quite slow - especially the 6B ones. It can take ~30-40s to make suggestions across 4 CPU cores.
+- I've only tested the system on Ubuntu 22.04. Your mileage may vary on other operating systems. Please let me know if you try it elsewhere. I'm particularly interested in performance on Apple Silicon.
+- Sometimes suggestions get truncated in nonsensical places - e.g. part way through a variable name or string name. This is due to a hard limit on suggestion length.
+- Sometimes the server will run out of memory and crash. This is because it will try to use everything above your current location as context during generation. I'm working on a fix.
 
 ## Acknowledgements
 
