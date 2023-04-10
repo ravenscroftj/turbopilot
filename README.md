@@ -40,6 +40,21 @@ If you have a multi-core system you can control how many CPUs are used with the 
 ./codegen-serve -t 6 -m ./models/codegen-6B-multi-ggml-4bit-quant.bin
 ```
 
+### Running From Docker
+
+You can also run Turbopilot from the pre-built docker image supplied [here](https://github.com/users/ravenscroftj/packages/container/package/turbopilot%2Fturbopilot)
+
+You will still need to download the models separately, then you can run:
+
+```bash
+docker run --rm -it \
+  -v ./models:/models \
+  -e THREADS=6 \
+  -e MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin" \
+  -p 18080:18080 \
+  ghcr.io/ravenscroftj/turbopilot/turbopilot:latest
+```
+
 ### Using the API
 
 #### Using the API with FauxPilot Plugin
