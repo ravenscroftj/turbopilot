@@ -8,54 +8,34 @@ TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone
 
 ## Getting Started
 
-```bash
-git clone https://github.com/ravenscroftj/turbopilot
-git submodule init
-cd ggml
-mkdir build
-cd build
-cmake ..
-make codegen codegen-quantize
-```
+The easiest way to try the project out is to grab the pre-processed models and then run the server in docker.
 
-## Getting The Models
+### Getting The Models
 
-### Direct Download
+#### Direct Download
 
 You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing). I've made the `multi` flavour models with 2B and 6B parameters available - these models are pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`
 
-### Convert The Models Yourself
+#### Convert The Models Yourself
 
-Start by downloading either the [2B](https://huggingface.co/moyix/codegen-2B-multi-gptj) or [6B](https://huggingface.co/moyix/codegen-6B-multi-gptj) GPT-J versions of CodeGen.
+Follow [this guide](https://github.com/ravenscroftj/turbopilot/wiki/Converting-and-Quantizing-The-Models) if you want to experiment with quantizing the models yourself.
 
-You could also experiment with the other sizes of model such as [16B](https://huggingface.co/moyix/codegen-16B-multi-gptj) if you want or try the mono models ([2B](https://huggingface.co/moyix/codegen-2B-mono-gptj), [6B](https://huggingface.co/moyix/codegen-6B-mono-gptj), [16B](https://huggingface.co/moyix/codegen-16B-mono-gptj)) which are fine-tuned on python only but which outperform the `multi` models in some cases (see [the original paper](https://arxiv.org/pdf/2203.13474.pdf) for details).
+### Running TurboPilot Server
 
-You will also need to place [vocab.json](https://huggingface.co/Salesforce/codegen-2B-multi/raw/main/vocab.json) and [added_tokens.json](https://huggingface.co/Salesforce/codegen-2B-multi/blob/main/added_tokens.json) in the directory along with the model to make the conversion script work. This is a temporary limitation that I'll remove at some point.
+Download the [latest binary](https://github.com/ravenscroftj/turbopilot/releases) and extract it to the root project folder. If a binary is not provided for your OS or you'd prefer to build it yourself follow the [build instructions](BUILD.md)
 
-You can directly `git clone` from huggingface URLS above. To save time you can disable LFS on first checkout and selectively pull the files you need (you only need the `.bin` files for conversion. The large `.zst` files are not needed). Here is an example:
-
-```bash
-GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/moyix/codegen-16B-multi-gptj
-git config lfs.fetchexclude "*.zst"
-git lfs fetch
-git lfs checkout *.bin
-```
-
-#### Install Python Dependencies
-
-The `convert-codegen-to-ggml.py` requires Python 3 - I used `3.10`. Install the dependencies with `pip install -r requirements.txt`.
-
-#### Convert The Model
+Run:
 
 ```bash
-python convert-codegen-to-ggml.py ./codegen-6B-multi-gptj 0
+./codegen-serve -m ./models/codegen-6B-multi-ggml-4bit-quant.bin
 ```
 
-#### Quantize the Model
+The application should start a server on port `18080`
 
-```bash
-./bin/codegen-quantize ./codegen-6B-multi-gptj/ggml-model-f32.bin ./codegen-6B-multi-gptj/ggml-model-quant.bin 2
-```
+
+
+
+
 
 
 ## Acknowledgements
