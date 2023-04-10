@@ -20,15 +20,21 @@ make codegen codegen-quantize
 
 ## Getting The Models
 
+### Direct Access
+
+You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing)
+
+### Convert The Models Yourself
+
 Start by downloading either the [2B](https://huggingface.co/moyix/codegen-2B-multi-gptj) or [6B](https://huggingface.co/moyix/codegen-6B-multi-gptj) GPT-J versions of CodeGen.
 
-## Convert The Model
+#### Convert The Model
 
 ```bash
 python convert-codegen-to-ggml.py ./codegen-6B-multi-gptj 0
 ```
 
-## Quantize the model
+#### Quantize the model
 
 ```bash
 ./bin/codegen-quantize ../../codegen-6B-multi-gptj/ggml-model-f32.bin ../../codegen-6B-multi-gptj/ggml-model-quant.bin 2
@@ -48,3 +54,4 @@ python convert-codegen-to-ggml.py ./codegen-6B-multi-gptj 0
 - The frontend of the project is powered by [Venthe's vscode-fauxpilot plugin](https://github.com/Venthe/vscode-fauxpilot)
 - The project uses the [Salesforce Codegen](https://github.com/salesforce/CodeGen) models.
 - Thanks to [Moyix](https://huggingface.co/moyix) for his work on converting the Salesforce models to run in a GPT-J architecture. Not only does this [confer some speed benefits](https://gist.github.com/moyix/7896575befbe1b99162ccfec8d135566) but it also made it much easier for me to port the models to GGML using the [existing gpt-j example code](https://github.com/ggerganov/ggml/tree/master/examples/gpt-j)
+- The model server uses [CrowCPP](https://crowcpp.org/master/) to serve suggestions.
