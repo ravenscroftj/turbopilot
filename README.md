@@ -1,6 +1,8 @@
 # TurboPilot
 
-TurboPilot is a super fast [fauxpilot](https://github.com/fauxpilot/fauxpilot) clone which uses the library behind [llama.cpp](https://github.com/comex/llama.cpp) to run huge [6 Billion Parameter Salesforce Codegen models](https://github.com/salesforce/CodeGen) in 2GiB of RAM.
+TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone which uses the library behind [llama.cpp](https://github.com/comex/llama.cpp) to run huge [6 Billion Parameter Salesforce Codegen models](https://github.com/salesforce/CodeGen) in 2GiB of RAM. It is heavily based and inspired by on the [fauxpilot](https://github.com/fauxpilot/fauxpilot) project.
+
+![a screen recording of turbopilot running through fauxpilot plugin](assets/screenrecording.gif)
 
 ## Getting Started
 
