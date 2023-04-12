@@ -1,10 +1,10 @@
-name: CMake
+name: Build Release
+
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - '*'
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -34,12 +34,10 @@ jobs:
         cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D CMAKE_EXE_LINKER_FLAGS="-static"
         cd ${{github.workspace}}/ggml/build 
         make codegen codegen-serve
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen ${{github.workspace}}/ggml/build/bin/codegen-serve
         
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v3.1.2
+        
+    - name: Create Release
+      uses: ncipollo/release-action@v1
       with:
-        # Artifact name
-        name: codegen-serve-amd64-linux # optional, default is artifact
-        # A file, directory or wildcard pattern that describes what to upload
-        path: ${{github.workspace}}/ggml/build/bin/codegen-serve
-        # The desired behavior if no files are found using the provided path.
+        artifacts: "${{github.workspace}}/ggml/build/bin/codegen,${{github.workspace}}/ggml/build/bin/codegen-serve"
