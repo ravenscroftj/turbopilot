@@ -6,11 +6,21 @@ TurboPilot is a C++ program that uses the [GGML](https://github.com/ggerganov/gg
 
 To build turbopilot you will need CMake, Libboost, a C++ toolchain and GNU Make.
 
+#### Ubuntu
+
 On Ubuntu you can install these things with:
 
 ```bash
 sudo apt-get update
 sudo apt-get install libboost-dev cmake build-essential
+```
+
+#### MacOS
+
+If you use [brew](https://brew.sh/) you can simply add these dependencies by running:
+
+```bash
+brew install cmake boost
 ```
 
 ### Checkout Submodules
@@ -24,8 +34,10 @@ Configure cmake to build the project with the following:
 ```bash
 mkdir ggml/build
 cd ggml/build
-cmake -D CMAKE_EXE_LINKER_FLAGS="-static" ..
+cmake ..
 ```
+
+If you are running on linux you can optionally compile a static build with `cmake -D CMAKE_EXE_LINKER_FLAGS="-static" ..` which should make your binary portable across different flavours of the OS.
 
 From here you can now build the components that make up turbopilot:
 
