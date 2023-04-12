@@ -59,7 +59,7 @@ if len(sys.argv) < 3:
 dir_model = sys.argv[1]
 fname_out = sys.argv[1] + "/ggml-model.bin"
 
-with open(dir_model + "/vocab.json", "r") as f:
+with open(dir_model + "/vocab.json", "r", encoding="utf8") as f:
     encoder = json.load(f)
 
 with open(dir_model + "/added_tokens.json", "r") as f:
