@@ -41,6 +41,7 @@ jobs:
       with:
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot
+        context: ${{github.workspace}}
       
     # - name: Publish Docker Image to GitHub Registry
     #   # You may pin to the exact commit or the version.
