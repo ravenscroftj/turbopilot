@@ -62,7 +62,7 @@ docker run --rm -it \
   -e THREADS=6 \
   -e MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin" \
   -p 18080:18080 \
-  ghcr.io/ravenscroftj/turbopilot/turbopilot:latest
+  ghcr.io/ravenscroftj/turbopilot:latest
 ```
 
 ### 🌐 Using the API
