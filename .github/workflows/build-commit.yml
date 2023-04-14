@@ -30,7 +30,13 @@ jobs:
     - name: Build
       id: make_build
       run: |
-        make
+        cd ${{github.workspace}}/ggml
+        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D CMAKE_EXE_LINKER_FLAGS="-static"
+        cd ${{github.workspace}}/ggml/build 
+        make codegen codegen-serve codegen-quantize
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-serve 
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-quantize
 
     - uses: benjlevesque/short-sha@v2.2
       id: short-sha
