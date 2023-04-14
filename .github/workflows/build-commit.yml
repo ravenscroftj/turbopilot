@@ -12,7 +12,45 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build:
+
+
+  build-macOS-latest:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Dependencies
+      id: depends
+      run: |
+        brew update
+        brew install cmake boost
+    - name: Build
+      id: make_build
+      run: |
+        make
+
+    - uses: benjlevesque/short-sha@v2.2
+      id: short-sha
+      with:
+        length: 6
+
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        # Artifact name
+        name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ steps.short-sha.outputs.sha }} # optional, default is artifact
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{github.workspace}}/ggml/build/bin/codegen*
+        # The desired behavior if no files are found using the provided path.
+        
+
+
+
+  build-ubuntu:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
