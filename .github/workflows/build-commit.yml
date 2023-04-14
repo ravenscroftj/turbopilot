@@ -61,7 +61,7 @@ jobs:
 
       run: |
         cd ${{github.workspace}}/ggml/build/bin 
-        zip ./codegen* turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
+        zip turbopilot-${{ runner.os }}-${{ runner.arch }}.zip ./codegen*
 
     - name: Upload binaries to release
       uses: softprops/action-gh-release@v1
