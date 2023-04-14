@@ -47,7 +47,7 @@ jobs:
     - name: package artifacts for release
       #if: startsWith(github.ref, 'refs/tags/')
 
-      run: 
+      run: |
         cd ${{github.workspace}}/ggml/build/bin 
         zip ./codegen* turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
 
