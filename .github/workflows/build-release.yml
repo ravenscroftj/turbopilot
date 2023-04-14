@@ -33,11 +33,27 @@ jobs:
         cd ${{github.workspace}}/ggml
         cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D CMAKE_EXE_LINKER_FLAGS="-static"
         cd ${{github.workspace}}/ggml/build 
-        make codegen codegen-serve
-        chmod +x ${{github.workspace}}/ggml/build/bin/codegen ${{github.workspace}}/ggml/build/bin/codegen-serve
+        make codegen codegen-serve codegen-quantize
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-serve 
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-quantize
         
         
-    - name: Create Release
-      uses: ncipollo/release-action@v1
+
+    - name: Prepare Release
+      run: |
+        zip /${{github.workspace}}/ggml/build/bin/build_${RUNNER_OS}_${RUNNER_ARCH}.zip \
+          ${{github.workspace}}/ggml/build/bin/codegen \
+          ${{github.workspace}}/ggml/build/bin/codegen-serve \
+          ${{github.workspace}}/ggml/build/bin/codegen-quantize \
+
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
       with:
-        artifacts: "${{github.workspace}}/ggml/build/bin/codegen,${{github.workspace}}/ggml/build/bin/codegen-serve"
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/release/mything
+        asset_name: mything
+        tag: ${{ github.ref }}
+        overwrite: true
+        body: "This is my release text"
