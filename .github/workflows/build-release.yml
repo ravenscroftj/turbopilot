@@ -42,18 +42,17 @@ jobs:
 
     - name: Prepare Release
       run: |
-        zip /${{github.workspace}}/ggml/build/bin/build_${RUNNER_OS}_${RUNNER_ARCH}.zip \
-          ${{github.workspace}}/ggml/build/bin/codegen \
-          ${{github.workspace}}/ggml/build/bin/codegen-serve \
-          ${{github.workspace}}/ggml/build/bin/codegen-quantize \
+        cd /${{github.workspace}}/ggml/build/bin/
+        zip ${{github.workspace}}/ggml/build/bin/release.zip \
+          codegen codegen-serve codegen-quantize
 
 
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/release/mything
-        asset_name: mything
+        file: ${{github.workspace}}/ggml/build/bin/release.zip
+        asset_name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ steps.short-sha.outputs.sha }}-{{ github.ref }}.zip
         tag: ${{ github.ref }}
         overwrite: true
-        body: "This is my release text"
+        body: "Turbopilot binary release"
