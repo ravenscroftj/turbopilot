@@ -26,7 +26,7 @@ You have 2 options for getting the model
 
 #### Option A: Direct Download - Easy, Quickstart
 
-You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing). I've made the `multi` flavour models with 2B and 6B parameters available - these models are pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`
+You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing). I've made the `multi` flavour models with 350M, 2B and 6B parameters available - these models are pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`
 
 #### Option B: Convert The Models Yourself - Hard, More Flexible
 
@@ -52,7 +52,7 @@ If you have a multi-core system you can control how many CPUs are used with the 
 
 ### 📦 Running From Docker
 
-You can also run Turbopilot from the pre-built docker image supplied [here](https://github.com/users/ravenscroftj/packages/container/package/turbopilot%2Fturbopilot)
+You can also run Turbopilot from the pre-built docker image supplied [here](https://github.com/users/ravenscroftj/packages/container/package/turbopilot)
 
 You will still need to download the models separately, then you can run:
 
@@ -132,12 +132,10 @@ Should get you something like this:
 
 Again I want to set expectations around this being a proof-of-concept project. With that in mind. Here are some current known limitations.
 
-As of **v0.0.1**:
+As of **v0.0.2**:
 - The models can be quite slow - especially the 6B ones. It can take ~30-40s to make suggestions across 4 CPU cores.
-- I've only tested the system on Ubuntu 22.04. Your mileage may vary on other operating systems. Please let me know if you try it elsewhere. I'm particularly interested in performance on Apple Silicon.
-- Sometimes suggestions get truncated in nonsensical places - e.g. part way through a variable name or string name. This is due to a hard limit on suggestion length.
-- Sometimes the server will run out of memory and crash. This is because it will try to use everything above your current location as context during generation. I'm working on a fix.
-
+- I've only tested the system on Ubuntu 22.04 but I am now supplying ARM docker images and soon I'll be providing ARM binary releases.
+- Sometimes suggestions get truncated in nonsensical places - e.g. part way through a variable name or string name. This is due to a hard limit of 2048 on the context length (prompt + suggestion).
 
 ## 👏 Acknowledgements
 
