@@ -29,17 +29,28 @@ jobs:
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
-        
         cd ${{github.workspace}}/ggml
         cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D CMAKE_EXE_LINKER_FLAGS="-static"
         cd ${{github.workspace}}/ggml/build 
-        make codegen codegen-serve
+        make codegen codegen-serve codegen-quantize
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-serve 
+        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-quantize
+        
+        
+
+    - name: Prepare Build Artifacts
+      run: |
+        zip ${{github.workspace}}/ggml/build/bin/build.zip \
+          ${{github.workspace}}/ggml/build/bin/codegen \
+          ${{github.workspace}}/ggml/build/bin/codegen-serve \
+          ${{github.workspace}}/ggml/build/bin/codegen-quantize \
         
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3.1.2
       with:
         # Artifact name
-        name: codegen-serve-amd64-linux # optional, default is artifact
+        name: turbopilot-${RUNNER_OS}-${RUNNER_ARCH} # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
-        path: ${{github.workspace}}/ggml/build/bin/codegen-serve
+        path: ${{github.workspace}}/ggml/build/bin/build.zip
         # The desired behavior if no files are found using the provided path.
