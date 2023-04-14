@@ -65,5 +65,5 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PUBLISH_TOKEN }}
         files: ${{github.workspace}}/ggml/build/bin/codegen*
