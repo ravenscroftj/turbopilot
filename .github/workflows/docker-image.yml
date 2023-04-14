@@ -52,18 +52,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         push: true
-        tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref }}
+        tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}
         context: ${{github.workspace}}
         platforms: linux/amd64,linux/arm64
       
-    # - name: Publish Docker Image to GitHub Registry
-    #   # You may pin to the exact commit or the version.
-    #   # uses: TilBlechschmidt/gp-docker-action@f89287d44556dd7d24f76c799cd0795eeb352bcf
-    #   uses: TilBlechschmidt/gp-docker-action@v0.2-alpha
-    #   with:
-    #     # GitHub token to push Docker image to GitHub Packages
-    #     github-token: ${{ secrets.GH_TOKEN }}
-    #     # Docker Image name
-    #     image-name: turbopilot
-    #     # Path to the directory where the Dockerfile resides
-    #     dockerfile-path: . # optional, default is .

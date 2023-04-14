@@ -39,14 +39,6 @@ jobs:
         chmod +x ${{github.workspace}}/ggml/build/bin/codegen-quantize
         
         
-
-    - name: Prepare Build Artifacts
-      run: |
-        zip ${{github.workspace}}/ggml/build/bin/build.zip \
-          ${{github.workspace}}/ggml/build/bin/codegen \
-          ${{github.workspace}}/ggml/build/bin/codegen-serve \
-          ${{github.workspace}}/ggml/build/bin/codegen-quantize \
-      
     - uses: benjlevesque/short-sha@v2.2
       id: short-sha
       with:
@@ -61,9 +53,16 @@ jobs:
         path: ${{github.workspace}}/ggml/build/bin/codegen*
         # The desired behavior if no files are found using the provided path.
 
+    - name: package artifacts for release
+      if: startsWith(github.ref, 'refs/tags/')
+      run: zip ${{github.workspace}}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip \
+          ${{github.workspace}}/ggml/build/bin/codegen \
+          ${{github.workspace}}/ggml/build/bin/codegen-serve \
+          ${{github.workspace}}/ggml/build/bin/codegen-quantize \
+        
     - name: Upload binaries to release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         token: ${{ secrets.PUBLISH_TOKEN }}
-        files: ${{github.workspace}}/ggml/build/bin/codegen*
+        files: ${{github.workspace}}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
