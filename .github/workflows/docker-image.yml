@@ -36,11 +36,22 @@ jobs:
         username: ravenscroftj
         password: ${{ secrets.GH_TOKEN }}
 
-    - name: Build and push
+    - name: Build and push incremental
       uses: docker/build-push-action@v4
+      if: (!startsWith(github.ref, 'refs/tags/'))
       with:
         push: true
-        tags: ghcr.io/ravenscroftj/turbopilot
+        tags: ghcr.io/ravenscroftj/turbopilot:latest
+        context: ${{github.workspace}}
+        platforms: linux/amd64,linux/arm64
+
+
+    - name: Build and push release
+      uses: docker/build-push-action@v4
+      if: (!startsWith(github.ref, 'refs/tags/'))
+      with:
+        push: true
+        tags: ghcr.io/ravenscroftj/turbopilot:${{ github.release }}
         context: ${{github.workspace}}
         platforms: linux/amd64,linux/arm64
       

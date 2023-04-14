@@ -59,3 +59,10 @@ jobs:
         # A file, directory or wildcard pattern that describes what to upload
         path: ${{github.workspace}}/ggml/build/bin/codegen*
         # The desired behavior if no files are found using the provided path.
+
+    - name: Upload binaries to release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ${{github.workspace}}/ggml/build/bin/codegen*
