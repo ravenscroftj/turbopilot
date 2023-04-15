@@ -7,7 +7,7 @@ TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone
 
 ***NB: This is a proof of concept right now rather than a stable tool. Autocompletion is quite slow in this version of the project. Feel free to play with it, but your mileage may vary.***
 
-![a screen recording of turbopilot running through fauxpilot plugin](assets/screenrecording.gif)
+![a screen recording of turbopilot running through fauxpilot plugin](assets/vscode-status.gif)
 
 ## 🤝 Contributing
 
@@ -69,7 +69,12 @@ docker run --rm -it \
 
 #### Using the API with FauxPilot Plugin
 
-To use the API from VSCode, I recommend the [vscode-fauxpilot](https://github.com/Venthe/vscode-fauxpilot) plugin. Once you install it, you will need to change a few settings in your settings.json file.
+
+
+
+To use the API from VSCode, I recommend the vscode-fauxpilot plugin. While I wait for Venthe to consider my PR (please react to it [here](https://github.com/Venthe/vscode-fauxpilot/pull/26)), you can download my build of the [vscode-fauxpilot plugin](https://github.com/ravenscroftj/vscode-fauxpilot/releases/tag/v1.1.5-ravenscroftj) which also has a progress indicator (as seen in the animation above).
+
+Once you install it, you will need to change a few settings in your settings.json file.
 
 - Open settings (CTRL/CMD + SHIFT + P) and select `Preferences: Open User Settings (JSON)`
 - Add the following values:
