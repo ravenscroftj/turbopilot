@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Added multi-threaded server support which should prevent health checks aimed at `GET /` from failing during prediction.
+- Separated autocomplete lambda into a separate C++ function so that it can be bound to `/v1/completions`, `/v1/engines/copilot-codex/completions` and `/v1/engines/codegen/completions`
+- Removed `model` from completion input as required param which stops the official copilot plugin from freaking out
 
 
 ## [0.0.3] 2023-04-13
