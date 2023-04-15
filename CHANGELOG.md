@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added multi-threaded server support which should prevent health checks aimed at `GET /` from failing during prediction.
+
+
 ## [0.0.3] 2023-04-13
 
 - Added 350M parameter codegen model to Google Drive folder
