@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.0.4] 2023-04-14
 
 - Added multi-threaded server support which should prevent health checks aimed at `GET /` from failing during prediction.
 - Separated autocomplete lambda into a separate C++ function so that it can be bound to `/v1/completions`, `/v1/engines/copilot-codex/completions` and `/v1/engines/codegen/completions`
