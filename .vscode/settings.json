@@ -1,0 +1,4 @@
+{
+    "cmake.sourceDirectory": "${workspaceFolder}/ggml",
+    "cmake.configureOnOpen": true
+}
