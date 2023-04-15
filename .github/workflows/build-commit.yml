@@ -30,7 +30,7 @@ jobs:
       id: make_build
       run: |
         cd ${{github.workspace}}/ggml
-        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}  -D CMAKE_C_FLAGS="-target arm64-apple-macos10.5"
+        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}  -D CMAKE_OSX_ARCHITECTURES="-arch;arm64"
         cd ${{github.workspace}}/ggml/build 
         make codegen codegen-serve codegen-quantize
         chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
