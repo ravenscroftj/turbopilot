@@ -67,9 +67,11 @@ docker run --rm -it \
 
 ### 🌐 Using the API
 
+#### Support for the official Copilot Plugin
+
+Support for the official VS Code copilot plugin is underway (See ticket #11). The API should now be broadly compatible with OpenAI.
+
 #### Using the API with FauxPilot Plugin
-
-
 
 
 To use the API from VSCode, I recommend the vscode-fauxpilot plugin. While I wait for Venthe to consider my PR (please react to it [here](https://github.com/Venthe/vscode-fauxpilot/pull/26)), you can download my build of the [vscode-fauxpilot plugin](https://github.com/ravenscroftj/vscode-fauxpilot/releases/tag/v1.1.5-ravenscroftj) which also has a progress indicator (as seen in the animation above).
