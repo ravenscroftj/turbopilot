@@ -1,6 +1,6 @@
 # TurboPilot 🚀
 
-[![CMake](https://github.com/ravenscroftj/turbopilot/actions/workflows/cmake.yml/badge.svg)](https://github.com/ravenscroftj/turbopilot/actions/workflows/cmake.yml) [![Mastodon Follow](https://img.shields.io/mastodon/follow/000117012?domain=https%3A%2F%2Ffosstodon.org%2F&style=social)](https://fosstodon.org/@jamesravey) ![BSD Licensed](https://img.shields.io/github/license/ravenscroftj/turbopilot) ![Time Spent](https://img.shields.io/endpoint?url=https://wakapi.nopro.be/api/compat/shields/v1/jamesravey/all_time/project%3Aturbopilot)
+[![Mastodon Follow](https://img.shields.io/mastodon/follow/000117012?domain=https%3A%2F%2Ffosstodon.org%2F&style=social)](https://fosstodon.org/@jamesravey) ![BSD Licensed](https://img.shields.io/github/license/ravenscroftj/turbopilot) ![Time Spent](https://img.shields.io/endpoint?url=https://wakapi.nopro.be/api/compat/shields/v1/jamesravey/all_time/project%3Aturbopilot)
 
 
 TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone which uses the library behind [llama.cpp](https://github.com/ggerganov/llama.cpp) to run the [6 Billion Parameter Salesforce Codegen model](https://github.com/salesforce/CodeGen) in 4GiB of RAM. It is heavily based and inspired by on the [fauxpilot](https://github.com/fauxpilot/fauxpilot) project.
