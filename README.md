@@ -26,7 +26,11 @@ You have 2 options for getting the model
 
 #### Option A: Direct Download - Easy, Quickstart
 
-You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing). I've made the `multi` flavour models with 350M, 2B and 6B parameters available - these models are pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`
+You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing). I've made the `multi` flavour models with 350M, 2B and 6B parameters available - these models are pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`  
+Pre-converted and pre-quantized models for the `mono` family of CodeGen (pre-trained on `Python` only) are available for download in the Hugging Face Hub:  
+:hugs: [CodeGen 350M mono](https://huggingface.co/Guglielmo/CodeGen-350M-mono-ggml-quant)  
+:hugs: [CodeGen 2B mono](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant)  
+:hugs: [CodeGen 6B mono](https://huggingface.co/Guglielmo/CodeGen-6B-mono-ggml-quant)
 
 #### Option B: Convert The Models Yourself - Hard, More Flexible
 
