@@ -78,9 +78,7 @@ Support for the official VS Code copilot plugin is underway (See ticket #11). Th
 #### Using the API with FauxPilot Plugin
 
 
-To use the API from VSCode, I recommend the vscode-fauxpilot plugin. While I wait for Venthe to consider my PR (please react to it [here](https://github.com/Venthe/vscode-fauxpilot/pull/26)), you can download my build of the [vscode-fauxpilot plugin](https://github.com/ravenscroftj/vscode-fauxpilot/releases/tag/v1.1.5-ravenscroftj) which also has a progress indicator (as seen in the animation above).
-
-Once you install it, you will need to change a few settings in your settings.json file.
+To use the API from VSCode, I recommend the vscode-fauxpilot plugin. Once you install it, you will need to change a few settings in your settings.json file.
 
 - Open settings (CTRL/CMD + SHIFT + P) and select `Preferences: Open User Settings (JSON)`
 - Add the following values:
