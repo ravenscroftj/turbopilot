@@ -26,7 +26,11 @@ You have 2 options for getting the model
 
 #### Option A: Direct Download - Easy, Quickstart
 
-You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing). I've made the `multi` flavour models with 350M, 2B and 6B parameters available - these models are pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`
+You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing). I've made the `multi` flavour models with 350M, 2B and 6B parameters available - these models are pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`  
+Pre-converted and pre-quantized models for the `mono` family of CodeGen (pre-trained on `Python` only) are available for download in the Hugging Face Hub:  
+:hugs: [CodeGen 350M mono](https://huggingface.co/Guglielmo/CodeGen-350M-mono-ggml-quant)  
+:hugs: [CodeGen 2B mono](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant)  
+:hugs: [CodeGen 6B mono](https://huggingface.co/Guglielmo/CodeGen-6B-mono-ggml-quant)
 
 #### Option B: Convert The Models Yourself - Hard, More Flexible
 
@@ -74,9 +78,7 @@ Support for the official VS Code copilot plugin is underway (See ticket #11). Th
 #### Using the API with FauxPilot Plugin
 
 
-To use the API from VSCode, I recommend the vscode-fauxpilot plugin. While I wait for Venthe to consider my PR (please react to it [here](https://github.com/Venthe/vscode-fauxpilot/pull/26)), you can download my build of the [vscode-fauxpilot plugin](https://github.com/ravenscroftj/vscode-fauxpilot/releases/tag/v1.1.5-ravenscroftj) which also has a progress indicator (as seen in the animation above).
-
-Once you install it, you will need to change a few settings in your settings.json file.
+To use the API from VSCode, I recommend the vscode-fauxpilot plugin. Once you install it, you will need to change a few settings in your settings.json file.
 
 - Open settings (CTRL/CMD + SHIFT + P) and select `Preferences: Open User Settings (JSON)`
 - Add the following values:
