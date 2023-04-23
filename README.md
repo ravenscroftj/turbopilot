@@ -26,11 +26,20 @@ You have 2 options for getting the model
 
 #### Option A: Direct Download - Easy, Quickstart
 
-You can download the pre-converted, pre-quantized models from [Google Drive](https://drive.google.com/drive/folders/1wFy1Y0pqoK23ZeMWWCp8evxWOJQVdaGh?usp=sharing). I've made the `multi` flavour models with 350M, 2B and 6B parameters available - these models are pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`  
-Pre-converted and pre-quantized models for the `mono` family of CodeGen (pre-trained on `Python` only) are available for download in the Hugging Face Hub:  
-:hugs: [CodeGen 350M mono](https://huggingface.co/Guglielmo/CodeGen-350M-mono-ggml-quant)  
-:hugs: [CodeGen 2B mono](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant)  
-:hugs: [CodeGen 6B mono](https://huggingface.co/Guglielmo/CodeGen-6B-mono-ggml-quant)
+You can download the pre-converted, pre-quantized models from Huggingface.
+
+
+The `multi` flavour models, pre-trained on  `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`, are available from here:
+
+-  CodeGen 350M multi [:arrow_down: direct download](https://huggingface.co/ravenscroftj/CodeGen-350M-multi-ggml-quant/resolve/main/codegen-350M-multi-ggml-4bit-quant.bin) [:hugs: project home](https://huggingface.co/ravenscroftj/CodeGen-350M-multi-ggml-quant)  
+-  CodeGen 2B multi [:arrow_down: direct download](https://huggingface.co/ravenscroftj/CodeGen-2B-multi-ggml-quant/resolve/main/codegen-2B-multi-ggml-4bit-quant.bin)  [:hugs: project home](https://huggingface.co/ravenscroftj/CodeGen-2B-multi-ggml-quant)  
+-  CodeGen 6B multi [:arrow_down: direct download](https://huggingface.co/ravenscroftj/CodeGen-6B-multi-ggml-quant/resolve/main/codegen-6B-multi-ggml-4bit-quant.bin)  [:hugs: project home](https://huggingface.co/ravenscroftj/CodeGen-6B-multi-ggml-quant)
+
+Pre-converted and pre-quantized models for the `mono` family of CodeGen (pre-trained on `Python` only) are available for download from here:
+
+- CodeGen 350M mono [:arrow_down: direct download](https://huggingface.co/Guglielmo/CodeGen-350M-mono-ggml-quant/resolve/main/ggml-model-quant.bin) [:hugs: project home](https://huggingface.co/Guglielmo/CodeGen-350M-mono-ggml-quant)  
+- CodeGen 2B mono [:arrow_down: direct download](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant/resolve/main/ggml-model-quant.bin) [:hugs: project home](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant)  
+- CodeGen 6B mono [:arrow_down: direct download](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant/resolve/main/ggml-model-quant.bin) [:hugs: project home](https://huggingface.co/Guglielmo/CodeGen-6B-mono-ggml-quant)
 
 #### Option B: Convert The Models Yourself - Hard, More Flexible
 
