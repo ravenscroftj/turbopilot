@@ -42,7 +42,7 @@ jobs:
       if: (!startsWith(github.ref, 'refs/tags/'))
       with:
         push: true
-        tags: ghcr.io/ravenscroftj/turbopilot:latest
+        tags: ghcr.io/ravenscroftj/turbopilot:nightly-${{ github.sha }}
         context: ${{github.workspace}}
         platforms: linux/amd64,linux/arm64
 
@@ -52,7 +52,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         push: true
-        tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}
+        tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}, ghcr.io/ravenscroftj/turbopilot:latest
         context: ${{github.workspace}}
         platforms: linux/amd64,linux/arm64
       
