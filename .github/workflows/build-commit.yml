@@ -2,8 +2,8 @@ name: Build on Commit
 
 on:
   push:
-    branches: [ '*' ]
-    tags: ['*']
+    branches: [ '**' ]
+    tags: ['**']
   pull_request:
     branches: [ "main" ]
 
