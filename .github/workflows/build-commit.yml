@@ -75,15 +75,15 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
 
-    strategy:
-          matrix:
-            include:
-            - build: 'avx2'
-              defines: ''
-            - build: 'avx'
-              defines: '-DLLAMA_AVX2=OFF'
-            - build: 'avx512'
-              defines: '-DLLAMA_AVX512=ON'
+    # strategy:
+    #       matrix:
+    #         include:
+    #         - build: 'avx2'
+    #           defines: ''
+    #         - build: 'avx'
+    #           defines: '-DLLAMA_AVX2=OFF'
+    #         - build: 'avx512'
+    #           defines: '-DLLAMA_AVX512=ON'
 
 
     steps:
