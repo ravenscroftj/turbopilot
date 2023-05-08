@@ -55,7 +55,7 @@ jobs:
 
     - name: Build and push release
       uses: docker/build-push-action@v4
-      if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag == ""
+      if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag == ''
       with:
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}, ghcr.io/ravenscroftj/turbopilot:latest
@@ -65,7 +65,7 @@ jobs:
 
     - name: Build and push release (CUDA)
       uses: docker/build-push-action@v4
-      if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag != ""
+      if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag != ''
       with:
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}
