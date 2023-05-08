@@ -17,7 +17,7 @@ jobs:
       matrix:
         config:
           - {tag: "", dockerfile: "./Dockerfile.default"}
-          - {tags: "-cuda", dockerfile: "./Dockerfile.cuda"}
+          - {tag: "-cuda", dockerfile: "./Dockerfile.cuda"}
 
     steps:
     
@@ -49,7 +49,7 @@ jobs:
       with:
         file: ${{matrix.config.dockerfile}}
         push: true
-        tags: ghcr.io/ravenscroftj/turbopilot:nightly${{ matrix.config.tag }}-${{ github.sha }}
+        tags: ghcr.io/ravenscroftj/turbopilot:nightly${{matrix.config.tag}}-${{ github.sha }}
         context: ${{github.workspace}}
         platforms: linux/amd64,linux/arm64
 
