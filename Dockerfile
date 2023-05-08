@@ -8,7 +8,7 @@ RUN mkdir /build/ggml/build
 
 WORKDIR  /build/ggml/build
 
-RUN cmake -D LLAMA_STATIC=ON ..
+RUN cmake -D GGML_STATIC=ON ..
 RUN make codegen-serve
 
 FROM alpine AS runtime
