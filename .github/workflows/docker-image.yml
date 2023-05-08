@@ -49,7 +49,7 @@ jobs:
       with:
         file: ${{matrix.config.dockerfile}}
         push: true
-        tags: ghcr.io/ravenscroftj/turbopilot:nightly-${{ github.sha }}
+        tags: ghcr.io/ravenscroftj/turbopilot:nightly${{matrix.config.tag}}-${{ github.sha }}
         context: ${{github.workspace}}
         platforms: linux/amd64,linux/arm64
 
