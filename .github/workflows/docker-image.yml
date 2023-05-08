@@ -47,6 +47,7 @@ jobs:
       uses: docker/build-push-action@v4
       if: (!startsWith(github.ref, 'refs/tags/'))
       with:
+        file: ${{matrix.config.dockerfile}}
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot:nightly-${{ github.sha }}
         context: ${{github.workspace}}
@@ -57,6 +58,7 @@ jobs:
       uses: docker/build-push-action@v4
       if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag == ''
       with:
+        file: ${{matrix.config.dockerfile}}
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}, ghcr.io/ravenscroftj/turbopilot:latest
         context: ${{github.workspace}}
@@ -67,6 +69,7 @@ jobs:
       uses: docker/build-push-action@v4
       if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag != ''
       with:
+        file: ${{matrix.config.dockerfile}}
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}
         context: ${{github.workspace}}
