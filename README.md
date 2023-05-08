@@ -9,6 +9,9 @@ TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone
 
 ![a screen recording of turbopilot running through fauxpilot plugin](assets/vscode-status.gif)
 
+
+**NEW:** As of v0.0.5 turbopilot supports cuda inference which greatly accelerates suggestions when working with longer prompts (i.e. longer existing code files).
+
 ## 🤝 Contributing
 
 PRs to this project and the corresponding [GGML fork](https://github.com/ravenscroftj/ggml) are very welcome.
@@ -80,6 +83,21 @@ docker run --rm -it \
   -p 18080:18080 \
   ghcr.io/ravenscroftj/turbopilot:latest
 ```
+
+#### Docker and CUDA
+
+As of release v0.0.5 turbocode now supports CUDA inference. In order to run the cuda-enabled container you will need to have [nvidia-docker](https://github.com/NVIDIA/nvidia-docker) enabled, use the cuda tagged versions and pass in `--gpus=all` to docker with access to your GPU like so:
+
+```bash
+docker run --gpus=all --rm -it \
+  -v ./models:/models \
+  -e THREADS=6 \
+  -e MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin" \
+  -p 18080:18080 \
+  ghcr.io/ravenscroftj/turbopilot:v0.0.5-cuda
+```
+
+You should be able to see `/app/codegen-serve` listed when you run `nvidia-smi`.
 
 ### 🌐 Using the API
 
