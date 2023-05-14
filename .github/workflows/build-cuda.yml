@@ -46,7 +46,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
         cd ${{github.workspace}}/ggml
-        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D CMAKE_EXE_LINKER_FLAGS="-static" -DGGML_CUBLAS=ON 
+        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D CMAKE_EXE_LINKER_FLAGS="-static" -DGGML_CUBLAS=ON  -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
         cd ${{github.workspace}}/ggml/build 
         make codegen codegen-serve codegen-quantize
         chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
