@@ -39,7 +39,7 @@ jobs:
       run: |
           wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
           sudo dpkg -i cuda-keyring_1.0-1_all.deb
-          sudo apt-get update && sudo apt-get install -yq libboost-dev cuda
+          sudo apt-get update && sudo apt-get install -yq libboost-dev cuda-nvcc-11-7
 
     - name: Build
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
