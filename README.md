@@ -97,7 +97,12 @@ docker run --gpus=all --rm -it \
   ghcr.io/ravenscroftj/turbopilot:v0.0.5-cuda
 ```
 
-You should be able to see `/app/codegen-serve` listed when you run `nvidia-smi`.
+You will need CUDA 11 or later to run this container. You should be able to see `/app/codegen-serve` listed when you run `nvidia-smi`.
+
+
+#### Executable and CUDA
+
+As of v0.0.5 a CUDA version of the linux executable is available - it requires that libcublas 11 be installed on the machine - I might build ubuntu debs at some point but for now running in docker may be more convenient if you want to use a CUDA GPU.
 
 ### 🌐 Using the API
 
