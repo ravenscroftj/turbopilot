@@ -81,4 +81,4 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         token: ${{ secrets.PUBLISH_TOKEN }}
-        files: ${{github.workspace}}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
+        files: ${{github.workspace}}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}-cuda.zip
