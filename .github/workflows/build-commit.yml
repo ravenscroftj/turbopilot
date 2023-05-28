@@ -105,7 +105,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
         cd ${{github.workspace}}/ggml
-        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D CMAKE_EXE_LINKER_FLAGS="-static" ${{ matrix.defines }}
+        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D GGML_STATIC=On ${{ matrix.defines }}
         cd ${{github.workspace}}/ggml/build 
         make codegen codegen-serve codegen-quantize
         chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
