@@ -149,11 +149,11 @@ jobs:
           - build: 'avx2'
             defines: ''
           - build: 'avx'
-            defines: '-GGML_AVX2=OFF'
+            defines: '-DGGML_AVX2=OFF'
           - build: 'avx512'
-            defines: '-GGML_AVX512=ON -DBUILD_SHARED_LIBS=ON'
+            defines: '-DGGML_AVX512=ON -DBUILD_SHARED_LIBS=ON'
           - build: 'openblas'
-            defines: '-GGML_OPENBLAS=ON -DBLAS_INCLUDE_DIRS="$env:RUNNER_TEMP/openblas/include" -DBLAS_LIBRARIES="$env:RUNNER_TEMP/openblas/lib/openblas.lib"'
+            defines: '-DGGML_OPENBLAS=ON -DBLAS_INCLUDE_DIRS="$env:RUNNER_TEMP/openblas/include" -DBLAS_LIBRARIES="$env:RUNNER_TEMP/openblas/lib/openblas.lib"'
 
 
     steps:
