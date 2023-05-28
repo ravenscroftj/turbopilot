@@ -84,7 +84,7 @@ jobs:
           - build: 'avx512'
             defines: '-DGGML_AVX512=ON'
           - build: 'openblas'
-            defines: '-DGGML_OPENBLAS=ON -DBLAS_INCLUDE_DIRS="$env:RUNNER_TEMP/openblas/include" -DBLAS_LIBRARIES="$env:RUNNER_TEMP/openblas/lib/openblas.lib"'
+            defines: '-DGGML_OPENBLAS=ON'
 
 
 
