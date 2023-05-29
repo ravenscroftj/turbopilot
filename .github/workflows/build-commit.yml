@@ -208,9 +208,7 @@ jobs:
           mkdir build
           cd build
           cmake .. ${{ matrix.defines }}
-          cmake --build . --config Release -t codegen
-          cmake --build . --config Release -t codegen-serve
-          cmake --build . --config Release -t codegen-quantize
+          cmake --build . --config Release --target codegen  codegen-serve codegen-quantize
 
       # - name: Add libopenblas.dll
       #   id: add_libopenblas_dll
