@@ -244,7 +244,7 @@ jobs:
           # Artifact name
           name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ steps.short-sha.outputs.sha }}-${{ matrix.build }} # optional, default is artifact
           # A file, directory or wildcard pattern that describes what to upload
-          path: ${{github.workspace}}/ggml/build/bin/codegen*
+          path: ${{github.workspace}}\\ggml\\build\\bin\\Release\\codegen*
           # The desired behavior if no files are found using the provided path.
           
       - name: package artifacts for release
