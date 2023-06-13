@@ -270,4 +270,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           token: ${{ secrets.PUBLISH_TOKEN }}
-          files: ${{github.workspace}}\\ggml\\build\\bin\\Release\\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
+          files: ${{github.workspace}}\ggml\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
