@@ -143,20 +143,13 @@ jobs:
         cd ${{github.workspace}}/ggml/build/bin 
         zip turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./codegen*
 
-    - name: Convert backslashes
-      id: convert_backslashes
-      run: |
-            $path = $env:GITHUB_WORKSPACE -replace '\\', '/' 
-            echo "Converted path: $path"
-            echo "::set-output name=converted_path::$path"
-  
 
     - name: Upload binaries to release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         token: ${{ secrets.PUBLISH_TOKEN }}
-        files: ${{ steps.convert_backslashes.outputs.converted_path }}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip
+        files: ${{github.workspace}}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip
 
   windows-latest-cmake:
     runs-on: windows-latest
@@ -255,7 +248,7 @@ jobs:
           id: short-sha
           with:
             length: 6
-    
+
   
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3.1.2
@@ -271,11 +264,20 @@ jobs:
   
         run: |
           cd ${{github.workspace}}\ggml\build\bin\\Release\
-          7z a ${{github.workspace}}\ggml\build\bin\\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip ./codegen*
+          7z a ${{github.workspace}}\ggml\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip ./codegen*
   
+    
+      - name: Convert backslashes
+        id: convert_backslashes
+        run: |
+              $path = $env:GITHUB_WORKSPACE -replace '\\', '/' 
+              echo "Converted path: $path"
+              echo "::set-output name=converted_path::$path"
+    
+
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           token: ${{ secrets.PUBLISH_TOKEN }}
-          files: ${{github.workspace}}\ggml\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
+          files: ${{ steps.convert_backslashes.outputs.converted_path }}/ggml/build/bin/Release/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
