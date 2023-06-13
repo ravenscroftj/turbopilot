@@ -32,7 +32,7 @@ jobs:
           7z a ${{github.workspace}}\ggml\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip *.md
   
       - name: Upload binaries to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v0.1.13
         with:
           token: ${{ secrets.PUBLISH_TOKEN }}
           files: ${{github.workspace}}\ggml\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
