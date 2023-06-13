@@ -78,15 +78,15 @@ jobs:
       matrix:
         include:
           - build: 'avx2'
-            defines: ''
+            defines: '-DGGML_STATIC=On'
           - build: 'avx'
-            defines: '-DGGML_AVX2=OFF'
+            defines: '-DGGML_AVX2=OFF -DGGML_STATIC=On'
           - build: 'avx512'
-            defines: '-DGGML_AVX512=ON'
+            defines: '-DGGML_AVX512=ON -DGGML_STATIC=On'
           - build: 'avx2-openblas'
-            defines: '-DGGML_OPENBLAS=ON'
+            defines: '-DGGML_OPENBLAS=ON -DGGML_STATIC=On'
           - build: 'avx2-cuda'
-            defines: '-DGGML_CUBLAS=ON  -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc'
+            defines: '-DGGML_CUBLAS=ON  -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -DGGML_STATIC=Off'
             
 
     steps:
@@ -113,7 +113,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
         cd ${{github.workspace}}/ggml
-        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D GGML_STATIC=On ${{ matrix.defines }}
+        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{ matrix.defines }}
         cd ${{github.workspace}}/ggml/build 
         make codegen codegen-serve codegen-quantize
         chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
