@@ -264,7 +264,7 @@ jobs:
   
         run: |
           cd ${{github.workspace}}\ggml\build\bin\\Release\
-          7z a ${{github.workspace}}\ggml\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip ./codegen*
+          7z a ${{github.workspace}}\ggml\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./codegen*
   
     
       - name: Convert backslashes
@@ -280,4 +280,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           token: ${{ secrets.PUBLISH_TOKEN }}
-          files: ${{ steps.convert_backslashes.outputs.converted_path }}/ggml/build/bin/Release/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
+          files: ${{ steps.convert_backslashes.outputs.converted_path }}/ggml/build/bin/Release/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip
