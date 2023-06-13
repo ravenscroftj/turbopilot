@@ -2,8 +2,8 @@ name: Build on Commit
 
 on:
   push:
-    branches: [ "main" ]
-    tags: ['*']
+    branches: [ '**' ]
+    tags: ['**']
   pull_request:
     branches: [ "main" ]
 
@@ -74,17 +74,20 @@ jobs:
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
-
     strategy:
-          matrix:
-            include:
-            - build: 'avx2'
-              defines: ''
-            - build: 'avx'
-              defines: '-DLLAMA_AVX2=OFF'
-            - build: 'avx512'
-              defines: '-DLLAMA_AVX512=ON'
-
+      matrix:
+        include:
+          - build: 'avx2'
+            defines: '-DGGML_STATIC=On'
+          - build: 'avx'
+            defines: '-DGGML_AVX2=OFF -DGGML_STATIC=On'
+          - build: 'avx512'
+            defines: '-DGGML_AVX512=ON -DGGML_STATIC=On'
+          - build: 'avx2-openblas'
+            defines: '-DGGML_OPENBLAS=ON -DGGML_STATIC=On'
+          - build: 'avx2-cuda'
+            defines: '-DGGML_CUBLAS=ON  -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -DGGML_STATIC=Off'
+            
 
     steps:
     - uses: actions/checkout@v3
@@ -94,12 +97,23 @@ jobs:
     - name: Install Dependencies
       run: sudo apt-get update && sudo apt-get install -yq libboost-dev
 
+    - name: Install OpenBlas
+      if: ${{ matrix.build == 'avx2-openblas' }}
+      run: sudo apt-get install libopenblas-dev
+
+    - name: Install CUDA
+      if: ${{ matrix.build == 'avx2-cuda' }}
+      run: |
+          wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+          sudo dpkg -i cuda-keyring_1.0-1_all.deb
+          sudo apt-get update && sudo apt-get install -yq libboost-dev cuda-nvcc-11-7 libcublas-dev-11-7
+
     - name: Build
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
         cd ${{github.workspace}}/ggml
-        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D CMAKE_EXE_LINKER_FLAGS="-static"
+        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{ matrix.defines }}
         cd ${{github.workspace}}/ggml/build 
         make codegen codegen-serve codegen-quantize
         chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
@@ -117,7 +131,7 @@ jobs:
       uses: actions/upload-artifact@v3.1.2
       with:
         # Artifact name
-        name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ steps.short-sha.outputs.sha }} # optional, default is artifact
+        name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}-${{ steps.short-sha.outputs.sha }} # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
         path: ${{github.workspace}}/ggml/build/bin/codegen*
         # The desired behavior if no files are found using the provided path.
@@ -127,11 +141,143 @@ jobs:
 
       run: |
         cd ${{github.workspace}}/ggml/build/bin 
-        zip turbopilot-${{ runner.os }}-${{ runner.arch }}.zip ./codegen*
+        zip turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./codegen*
+
 
     - name: Upload binaries to release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         token: ${{ secrets.PUBLISH_TOKEN }}
-        files: ${{github.workspace}}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
+        files: ${{github.workspace}}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip
+
+  windows-latest-cmake:
+    runs-on: windows-latest
+    env:
+      OPENBLAS_VERSION: 0.3.23
+      OPENCL_VERSION: 2023.04.17
+      CLBLAST_VERSION: 1.6.0
+    
+    strategy:
+      matrix:
+        include:
+          - build: 'avx2'
+            defines: ''
+          - build: 'avx'
+            defines: '-DGGML_AVX2=OFF'
+          - build: 'avx512'
+            defines: '-DGGML_AVX512=ON'
+          - build: 'openblas'
+            defines: '-DGGML_OPENBLAS=ON -DBLAS_INCLUDE_DIRS="$env:RUNNER_TEMP/openblas/include" -DBLAS_LIBRARIES="$env:RUNNER_TEMP/openblas/lib/openblas.lib"'
+
+
+    steps:
+      - name: Clone
+        id: checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: benjlevesque/short-sha@v2.2
+        id: short-sha
+        with:
+          length: 6
+
+      - name: Install boost
+        uses: MarkusJx/install-boost@v2.4.1
+        id: install-boost
+        with:
+            # REQUIRED: Specify the required boost version
+            # A list of supported versions can be found here:
+            # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
+            boost_version: 1.78.0
+            # OPTIONAL: Specify a custon install location
+            boost_install_dir: C:\boost
+            # OPTIONAL: Specify a platform version
+            platform_version: 2022
+            # OPTIONAL: Specify a toolset
+            toolset: msvc
+      
+            # NOTE: If a boost version matching all requirements cannot be found,
+            # this build step will fail
+            
+      - name: Download OpenBLAS
+        id: get_openblas
+        if: ${{ matrix.build == 'openblas' }}
+        run: |
+          curl.exe -o $env:RUNNER_TEMP/openblas.zip -L "https://github.com/xianyi/OpenBLAS/releases/download/v${env:OPENBLAS_VERSION}/OpenBLAS-${env:OPENBLAS_VERSION}-x64.zip"
+          curl.exe -o $env:RUNNER_TEMP/OpenBLAS.LICENSE.txt -L "https://github.com/xianyi/OpenBLAS/raw/v${env:OPENBLAS_VERSION}/LICENSE"
+          mkdir $env:RUNNER_TEMP/openblas
+          tar.exe -xvf $env:RUNNER_TEMP/openblas.zip -C $env:RUNNER_TEMP/openblas
+          $vcdir = $(vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
+          $msvc = $(join-path $vcdir $('VC\Tools\MSVC\'+$(gc -raw $(join-path $vcdir 'VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt')).Trim()))
+          $lib =  $(join-path $msvc 'bin\Hostx64\x64\lib.exe')
+          & $lib /machine:x64 "/def:${env:RUNNER_TEMP}/openblas/lib/libopenblas.def" "/out:${env:RUNNER_TEMP}/openblas/lib/openblas.lib" /name:openblas.dll
+      - name: Build
+        id: cmake_build
+        env:
+          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+        run: |
+          cd ${{github.workspace}}/ggml
+          mkdir build
+          cd build
+          cmake .. ${{ matrix.defines }}
+          cmake --build . --config Release --target codegen  codegen-serve codegen-quantize
+
+      # - name: Add libopenblas.dll
+      #   id: add_libopenblas_dll
+      #   if: ${{ matrix.build == 'openblas' }}
+      #   run: |
+      #     cp $env:RUNNER_TEMP/openblas/bin/libopenblas.dll ./build/bin/Release/openblas.dll
+      #     cp $env:RUNNER_TEMP/OpenBLAS.LICENSE.txt ./build/bin/Release/OpenBLAS-${env:OPENBLAS_VERSION}.txt
+
+      - name: Check AVX512F support
+        id: check_avx512f
+        if: ${{ matrix.build == 'avx512' }}
+        continue-on-error: true
+        run: |
+          cd build
+          $vcdir = $(vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
+          $msvc = $(join-path $vcdir $('VC\Tools\MSVC\'+$(gc -raw $(join-path $vcdir 'VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt')).Trim()))
+          $cl =  $(join-path $msvc 'bin\Hostx64\x64\cl.exe')
+          echo 'int main(void){unsigned int a[4];__cpuid(a,7);return !(a[1]&65536);}' >> avx512f.c
+          & $cl /O2 /GS- /kernel avx512f.c /link /nodefaultlib /entry:main
+          .\avx512f.exe && echo "AVX512F: YES" && ( echo HAS_AVX512F=1 >> $env:GITHUB_ENV ) || echo "AVX512F: NO"
+
+          - uses: benjlevesque/short-sha@v2.2
+          id: short-sha
+          with:
+            length: 6
+
+  
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          # Artifact name
+          name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ steps.short-sha.outputs.sha }}-${{ matrix.build }} # optional, default is artifact
+          # A file, directory or wildcard pattern that describes what to upload
+          path: ${{github.workspace}}\\ggml\\build\\bin\\Release\\codegen*
+          # The desired behavior if no files are found using the provided path.
+          
+      - name: package artifacts for release
+        if: startsWith(github.ref, 'refs/tags/')
+  
+        run: |
+          cd ${{github.workspace}}\ggml\build\bin\\Release\
+          7z a ${{github.workspace}}\ggml\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./codegen*
+  
+    
+      - name: Convert backslashes
+        id: convert_backslashes
+        run: |
+              $path = $env:GITHUB_WORKSPACE -replace '\\', '/' 
+              echo "Converted path: $path"
+              echo "::set-output name=converted_path::$path"
+    
+
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          token: ${{ secrets.PUBLISH_TOKEN }}
+          files: ${{ steps.convert_backslashes.outputs.converted_path }}/ggml/build/bin/Release/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip

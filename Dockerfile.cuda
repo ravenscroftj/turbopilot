@@ -22,6 +22,8 @@ ENV THREADS=4
 
 ENV MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin"
 
+ENV BATCHSIZE=64
+
 COPY ./run.sh /app/
 
 EXPOSE 18080
