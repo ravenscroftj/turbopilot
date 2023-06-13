@@ -29,10 +29,10 @@ jobs:
 
         run: |
           cd ${{github.workspace}}\ggml
-          7z a ${{github.workspace}}\ggml\build\bin\\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip *.md
+          7z a ${{github.workspace}}\ggml\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip *.md
   
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.PUBLISH_TOKEN }}
-          files: ${{github.workspace}}\ggml\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
+          files: ${{github.workspace}}\ggml\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
