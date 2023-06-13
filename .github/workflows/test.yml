@@ -32,13 +32,15 @@ jobs:
           7z a ${{github.workspace}}\ggml\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip *.md
 
       - name: Convert backslashes
+        id: convert_backslashes
         run: |
-            path="${{ github.workspace }}"
-            path="${path//\\//}"
-            echo "::set-output name=path::$path"
+            $path = $env:GITHUB_WORKSPACE -replace '\\', '/'
+            echo "Converted path: $path"
+            echo "::set-output name=converted_path::$path"
   
+
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.PUBLISH_TOKEN }}
-          files: ${{ steps.convert_backslashes.outputs.path }}/ggml/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
+          files: ${{ steps.convert_backslashes.outputs.converted_path }}/ggml/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
