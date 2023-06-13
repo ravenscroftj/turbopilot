@@ -1,0 +1,38 @@
+name: Build on Commit
+
+on:
+  push:
+    branches: [ '**' ]
+    tags: ['**']
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+
+
+  test:
+    runs-on: windows-latest
+
+
+    steps:
+      - name: Clone
+        id: checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: package artifacts for release
+
+        run: |
+          cd ${{github.workspace}}\ggml
+          7z a ${{github.workspace}}\ggml\build\bin\\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip *.md
+  
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.PUBLISH_TOKEN }}
+          files: ${{github.workspace}}\ggml\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
