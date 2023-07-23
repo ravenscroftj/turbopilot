@@ -7,3 +7,6 @@
 [submodule "extern/sbdlog"]
 	path = extern/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "extern/crow"]
+	path = extern/crow
+	url = https://github.com/CrowCpp/Crow.git

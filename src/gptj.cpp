@@ -555,7 +555,7 @@ bool GPTJModel::load_model(std::string fname) {
     return true;
 }
 
-std::stringstream GPTJModel::predict(std::string prompt, int max_length) {
+std::stringstream GPTJModel::predict(std::string prompt, int max_length, bool include_prompt) {
 
     std::stringstream result;
     // tokenize the prompt
@@ -614,23 +614,26 @@ std::stringstream GPTJModel::predict(std::string prompt, int max_length) {
 
             // add it to the context
             embd.push_back(id);
+
+            if(id != 50256){
+                result << vocab->id_to_token[id].c_str();
+            }
+            
         } else {
             // if here, it means we are still processing the input prompt
             for (int k = i; k < embd_inp.size(); k++) {
                 embd.push_back(embd_inp[k]);
+
+                if(include_prompt){
+                    result << vocab->id_to_token[embd_inp[k]].c_str();
+                }
+
                 if (embd.size() > config.n_batch) {
                     break;
                 }
             }
             i += embd.size() - 1;
         }
-
-        // display text
-        for (auto id : embd) {
-            result << vocab->id_to_token[id].c_str();
-            //printf("%s", vocab->id_to_token[id].c_str());
-        }
-        fflush(stdout);
 
         // end of text token
         if (embd.back() == 50256) {

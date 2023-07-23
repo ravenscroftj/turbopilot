@@ -51,7 +51,7 @@ public:
         rng(rng) 
     {}
     virtual bool load_model(std::string model_path) = 0;
-    virtual std::stringstream predict(std::string prompt, int max_length) = 0;
+    virtual std::stringstream predict(std::string prompt, int max_length, bool include_prompt) = 0;
 
 protected:
     ModelConfig config;

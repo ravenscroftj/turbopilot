@@ -71,7 +71,7 @@ public:
     }
     virtual ~GPTJModel();
     bool load_model(std::string path);
-    virtual std::stringstream predict(std::string prompt, int max_length);
+    virtual std::stringstream predict(std::string prompt, int max_length, bool include_prompt);
 
 private:
     gptj_model *model = NULL;

@@ -8,6 +8,7 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 add_subdirectory(extern/ggml)
 add_subdirectory(extern/argparse)
 add_subdirectory(extern/spdlog)
+add_subdirectory(extern/crow)
 add_subdirectory(src)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

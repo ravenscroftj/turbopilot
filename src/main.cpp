@@ -4,10 +4,13 @@
 
 #include <spdlog/spdlog.h>
 
-#include <argparse/argparse.hpp>
-#include "turbopilot/model.hpp"
+#include <crow.h>
 
+#include <argparse/argparse.hpp>
+
+#include "turbopilot/model.hpp"
 #include "turbopilot/gptj.hpp"
+#include "turbopilot/server.hpp"
 
 int main(int argc, char **argv)
 {
@@ -24,12 +27,15 @@ int main(int argc, char **argv)
 
     program.add_argument("-p", "--port")
         .help("The tcp port that turbopilot should listen on")
-        .default_value("18080");
+        .default_value(18080)
+        .scan<'i', int>();
 
     program.add_argument("-r", "--random-seed")
         .help("Set the random seed for RNG functions")
         .default_value(-1)
         .scan<'i', int>();
+
+    program.add_argument("prompt").remaining();
 
 
     try
@@ -76,9 +82,43 @@ int main(int argc, char **argv)
 
     spdlog::info("Loaded model in {:0.2f}ms", t_load_us/1000.0f);
 
-    auto result = model->predict("test", 100);
 
-    spdlog::info("output: {}", result.str());
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")([](){
+        return "Hello world";
+    });
+
+    CROW_ROUTE(app, "/copilot_internal/v2/token")([](){
+        //return "Hello world";
+
+        crow::json::wvalue response = {{"token","1"}, {"expires_at", static_cast<std::uint64_t>(2600000000)}, {"refresh_in",900}};
+
+        crow::response res;
+        res.code = 200;
+        res.set_header("Content-Type", "application/json");
+        res.body = response.dump();
+        return res;
+    });
+
+
+    CROW_ROUTE(app, "/v1/completions").methods(crow::HTTPMethod::Post)
+    ([&model](const crow::request& req) {
+        return serve_response(model, req);
+    });
+
+    CROW_ROUTE(app, "/v1/engines/codegen/completions").methods(crow::HTTPMethod::Post)
+    ([&model](const crow::request& req) {
+        return serve_response(model, req);
+    });
+
+
+    CROW_ROUTE(app, "/v1/engines/copilot-codex/completions").methods(crow::HTTPMethod::Post)
+    ([&model](const crow::request& req) {
+        return serve_response(model, req);
+    });
+
+    app.port(program.get<int>("--port")).multithreaded().run();
 
     free(model);
 }
