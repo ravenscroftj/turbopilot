@@ -112,7 +112,7 @@ jobs:
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{ matrix.defines }}
         cd ${{github.workspace}}/build 
         make
-        chmod +x ${{github.workspace}}/build/turbopilot
+        chmod +x ${{github.workspace}}/build/bin/turbopilot
         
         
     - uses: benjlevesque/short-sha@v2.2
@@ -127,14 +127,14 @@ jobs:
         # Artifact name
         name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}-${{ steps.short-sha.outputs.sha }} # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
-        path: ${{github.workspace}}/build/turbopilot
+        path: ${{github.workspace}}/build/bin/turbopilot
         # The desired behavior if no files are found using the provided path.
         
     - name: package artifacts for release
       if: startsWith(github.ref, 'refs/tags/')
 
       run: |
-        cd ${{github.workspace}}/build
+        cd ${{github.workspace}}/build/bin
         zip turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./turbopilot
 
 
@@ -143,7 +143,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         token: ${{ secrets.PUBLISH_TOKEN }}
-        files: ${{github.workspace}}/build/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip
+        files: ${{github.workspace}}/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip
 
   windows-latest-cmake:
     runs-on: windows-latest
