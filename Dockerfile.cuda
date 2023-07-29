@@ -16,7 +16,7 @@ FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04 AS runtime
 
 WORKDIR /app
 
-COPY --from=build /turbopilot/build/turbopilot /app/turbopilot
+COPY --from=build /turbopilot/build/bin/turbopilot /app/turbopilot
 
 ENV THREADS=4
 

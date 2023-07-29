@@ -16,7 +16,7 @@ FROM alpine AS runtime
 
 WORKDIR /app
 
-COPY --from=build /turbopilot/build/turbopilot /app/turbopilot
+COPY --from=build /turbopilot/build/bin/turbopilot /app/turbopilot
 
 ENV THREADS=4
 
