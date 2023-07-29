@@ -9,6 +9,7 @@
 #include <argparse/argparse.hpp>
 
 #include "turbopilot/model.hpp"
+#include "turbopilot/starcoder.hpp"
 #include "turbopilot/gptj.hpp"
 #include "turbopilot/server.hpp"
 
@@ -64,6 +65,9 @@ int main(int argc, char **argv)
     if(model_type.compare("codegen") == 0) {
         spdlog::info("Initializing GPT-J type model for '{}' model", model_type);
         model = new GPTJModel(config, rng);
+    }else if(model_type.compare("starcoder") == 0 || model_type.compare("wizardcoder") == 0){
+        spdlog::info("Initializing Starcoder/Wizardcoder type model for '{}' model type", model_type);
+        model = new StarcoderModel(config, rng);
     }else{
         spdlog::error("Invalid model type: {}", model_type);
     }

@@ -8,6 +8,9 @@
 #include <vector>
 #include <random>
 
+typedef void (*offload_func_t)(struct ggml_tensor * tensor);
+void ggml_nop(struct ggml_tensor * tensor);
+
 struct gpt_vocab
 {
     using id = int32_t;

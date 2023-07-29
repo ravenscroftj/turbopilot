@@ -4,10 +4,14 @@
 #include <cmath>
 #include <random>
 
+void llama_nop(struct ggml_tensor * tensor) { // don't offload by default
+    (void) tensor;
+}
 
 void gpt_vocab::add_special_token(const std::string & token) {
     special_tokens.push_back(token);
 }
+
 
 void gpt_split_words(std::string str, std::vector<std::string>& words) {
     const std::string pattern = R"('s|'t|'re|'ve|'m|'ll|'d| ?[[:alpha:]]+| ?[[:digit:]]+| ?[^\s[:alpha:][:digit:]]+|\s+(?!\S)|\s+)";

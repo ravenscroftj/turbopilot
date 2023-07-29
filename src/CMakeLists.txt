@@ -9,8 +9,10 @@ add_executable(${TURBOPILOT_TARGET}
   gptj.cpp
   common.cpp
   server.cpp
+  starcoder.cpp
   ../include/turbopilot/model.hpp
   ../include/turbopilot/gptj.hpp
+  ../include/turbopilot/starcoder.hpp
   )
 
 
