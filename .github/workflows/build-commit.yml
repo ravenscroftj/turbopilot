@@ -30,13 +30,10 @@ jobs:
     - name: Build
       id: make_build
       run: |
-        cd ${{github.workspace}}/ggml
-        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-        cd ${{github.workspace}}/ggml/build 
-        make codegen codegen-serve codegen-quantize
-        chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
-        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-serve 
-        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-quantize
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+        cd ${{github.workspace}}/build 
+        make 
+        chmod +x ${{github.workspace}}/build/bin/turbopilot
 
     - uses: benjlevesque/short-sha@v2.2
       id: short-sha
@@ -50,22 +47,22 @@ jobs:
         # Artifact name
         name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ steps.short-sha.outputs.sha }} # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
-        path: ${{github.workspace}}/ggml/build/bin/codegen*
+        path: ${{github.workspace}}/build/bin/turbopilot
         # The desired behavior if no files are found using the provided path.
         
     - name: package artifacts for release
       if: startsWith(github.ref, 'refs/tags/')
 
       run: |
-        cd ${{github.workspace}}/ggml/build/bin 
-        zip turbopilot-${{ runner.os }}-${{ runner.arch }}.zip ./codegen*
+        cd ${{github.workspace}}/build/bin
+        zip turbopilot-${{ runner.os }}-${{ runner.arch }}.zip ./turbopilot
 
     - name: Upload binaries to release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         token: ${{ secrets.PUBLISH_TOKEN }}
-        files: ${{github.workspace}}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
+        files: ${{github.workspace}}/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}.zip
 
 
 
@@ -112,13 +109,10 @@ jobs:
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
-        cd ${{github.workspace}}/ggml
-        cmake -B ${{github.workspace}}/ggml/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{ matrix.defines }}
-        cd ${{github.workspace}}/ggml/build 
-        make codegen codegen-serve codegen-quantize
-        chmod +x ${{github.workspace}}/ggml/build/bin/codegen 
-        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-serve 
-        chmod +x ${{github.workspace}}/ggml/build/bin/codegen-quantize
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{ matrix.defines }}
+        cd ${{github.workspace}}/build 
+        make
+        chmod +x ${{github.workspace}}/build/turbopilot
         
         
     - uses: benjlevesque/short-sha@v2.2
@@ -133,15 +127,15 @@ jobs:
         # Artifact name
         name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}-${{ steps.short-sha.outputs.sha }} # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
-        path: ${{github.workspace}}/ggml/build/bin/codegen*
+        path: ${{github.workspace}}/build/turbopilot
         # The desired behavior if no files are found using the provided path.
         
     - name: package artifacts for release
       if: startsWith(github.ref, 'refs/tags/')
 
       run: |
-        cd ${{github.workspace}}/ggml/build/bin 
-        zip turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./codegen*
+        cd ${{github.workspace}}/build
+        zip turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./turbopilot
 
 
     - name: Upload binaries to release
@@ -149,7 +143,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         token: ${{ secrets.PUBLISH_TOKEN }}
-        files: ${{github.workspace}}/ggml/build/bin/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip
+        files: ${{github.workspace}}/build/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip
 
   windows-latest-cmake:
     runs-on: windows-latest
@@ -218,11 +212,10 @@ jobs:
         env:
           BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: |
-          cd ${{github.workspace}}/ggml
           mkdir build
           cd build
           cmake .. ${{ matrix.defines }}
-          cmake --build . --config Release --target codegen  codegen-serve codegen-quantize
+          cmake --build . --config Release --target turbopilot
 
       # - name: Add libopenblas.dll
       #   id: add_libopenblas_dll
@@ -244,11 +237,6 @@ jobs:
           & $cl /O2 /GS- /kernel avx512f.c /link /nodefaultlib /entry:main
           .\avx512f.exe && echo "AVX512F: YES" && ( echo HAS_AVX512F=1 >> $env:GITHUB_ENV ) || echo "AVX512F: NO"
 
-          - uses: benjlevesque/short-sha@v2.2
-          id: short-sha
-          with:
-            length: 6
-
   
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3.1.2
@@ -256,15 +244,15 @@ jobs:
           # Artifact name
           name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ steps.short-sha.outputs.sha }}-${{ matrix.build }} # optional, default is artifact
           # A file, directory or wildcard pattern that describes what to upload
-          path: ${{github.workspace}}\\ggml\\build\\bin\\Release\\codegen*
+          path: ${{github.workspace}}\\build\\bin\\Release\\turbopilot
           # The desired behavior if no files are found using the provided path.
           
       - name: package artifacts for release
         if: startsWith(github.ref, 'refs/tags/')
   
         run: |
-          cd ${{github.workspace}}\ggml\build\bin\\Release\
-          7z a ${{github.workspace}}\ggml\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./codegen*
+          cd ${{github.workspace}}\build\bin\Release\
+          7z a ${{github.workspace}}\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./turbopilot
   
     
       - name: Convert backslashes
@@ -280,4 +268,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           token: ${{ secrets.PUBLISH_TOKEN }}
-          files: ${{ steps.convert_backslashes.outputs.converted_path }}/ggml/build/bin/Release/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip
+          files: ${{ steps.convert_backslashes.outputs.converted_path }}/build/bin/Release/turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip

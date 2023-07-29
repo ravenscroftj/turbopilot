@@ -2,21 +2,21 @@ FROM alpine AS build
 
 RUN apk add --update alpine-sdk boost-dev cmake
 
-ADD ./ggml /build/ggml
+ADD ./ /turbopilot/
 
-RUN mkdir /build/ggml/build
+RUN mkdir /turbopilot/build
 
-WORKDIR  /build/ggml/build
+WORKDIR  /turbopilot/build
 
 RUN cmake -D GGML_STATIC=ON ..
-RUN make codegen-serve
+RUN make turbopilot
 
 FROM alpine AS runtime
 
 
 WORKDIR /app
 
-COPY --from=build /build/ggml/build/bin/codegen-serve /app/codegen-serve
+COPY --from=build /turbopilot/build/turbopilot /app/turbopilot
 
 ENV THREADS=4
 
