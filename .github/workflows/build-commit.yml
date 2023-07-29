@@ -26,7 +26,7 @@ jobs:
       id: depends
       run: |
         brew update
-        brew install cmake boost
+        brew install cmake boost asio
     - name: Build
       id: make_build
       run: |
@@ -92,7 +92,7 @@ jobs:
         submodules: true
 
     - name: Install Dependencies
-      run: sudo apt-get update && sudo apt-get install -yq libboost-dev
+      run: sudo apt-get update && sudo apt-get install -yq libboost-dev libasio-dev
 
     - name: Install OpenBlas
       if: ${{ matrix.build == 'avx2-openblas' }}

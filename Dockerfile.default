@@ -1,6 +1,6 @@
 FROM alpine AS build
 
-RUN apk add --update alpine-sdk boost-dev cmake
+RUN apk add --update alpine-sdk boost-dev cmake asio-dev
 
 ADD ./ /turbopilot/
 
