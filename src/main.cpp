@@ -4,7 +4,7 @@
 
 #include <spdlog/spdlog.h>
 
-#include <crow.h>
+#include <turbopilot/crow_all.h>
 
 #include <argparse/argparse.hpp>
 
