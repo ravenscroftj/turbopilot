@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         config:
-          - {tag: "", dockerfile: "./Dockerfile.default", platforms:"linux/amd64,linux/arm64"}
+          - {tag: "", dockerfile: "./Dockerfile.default", platforms: "linux/amd64,linux/arm64"}
           - {tag: "-cuda", dockerfile: "./Dockerfile.cuda", platforms: "linux/amd64"}
 
     steps:
