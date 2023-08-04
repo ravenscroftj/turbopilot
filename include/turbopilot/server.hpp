@@ -4,7 +4,7 @@
 
 #include "turbopilot/model.hpp"
 
-#include <crow.h>
+#include "crow_all.h"
 
 crow::response serve_response(TurbopilotModel *model, const crow::request& req);
 
