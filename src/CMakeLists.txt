@@ -25,3 +25,6 @@ target_include_directories(${TURBOPILOT_TARGET} PRIVATE
 target_link_libraries(${TURBOPILOT_TARGET} PRIVATE ggml argparse)
 
 target_link_libraries(${TURBOPILOT_TARGET} PUBLIC Crow::Crow)
+
+
+#target_link_libraries(${TURBOPILOT_TARGET} PRIVATE spdlog::spdlog_header_only)

@@ -11,7 +11,6 @@ if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES
         # TODO: arm msvc?
         message(STATUS "ARM+MSVC= :( ")
     else()
-    add_compile_options(())
         if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "armv6")
             # Raspberry Pi 1, Zero
             add_compile_options(-mfpu=neon-fp-armv8 -mfp16-format=ieee -mno-unaligned-access)
@@ -30,7 +29,7 @@ endif()
 
 add_subdirectory(extern/ggml)
 add_subdirectory(extern/argparse)
-add_subdirectory(extern/spdlog)
+#add_subdirectory(extern/spdlog)
 add_subdirectory(extern/crow)
 add_subdirectory(src)
 
