@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         config:
-          - {tag: "", dockerfile: "./Dockerfile.default"}
-          - {tag: "-cuda", dockerfile: "./Dockerfile.cuda"}
+          - {tag: "", dockerfile: "./Dockerfile.default", platforms:"linux/amd64,linux/arm64"}
+          - {tag: "-cuda", dockerfile: "./Dockerfile.cuda", platforms: "linux/amd64"}
 
     steps:
     
@@ -51,7 +51,7 @@ jobs:
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot:nightly${{matrix.config.tag}}-${{ github.sha }}
         context: ${{github.workspace}}
-        platforms: linux/amd64,linux/arm64
+        platforms: ${{matrix.config.platforms}}
 
 
     - name: Build and push release
@@ -62,7 +62,7 @@ jobs:
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}, ghcr.io/ravenscroftj/turbopilot:latest
         context: ${{github.workspace}}
-        platforms: linux/amd64,linux/arm64  
+        platforms: ${{matrix.config.platforms}} 
 
 
     - name: Build and push release (CUDA)
