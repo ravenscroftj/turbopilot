@@ -251,8 +251,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
   
         run: |
-          cd ${{github.workspace}}\build\bin\Release\
-          7z a ${{github.workspace}}\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ./turbopilot
+          7z a ${{github.workspace}}\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ${{github.workspace}}\\build\\bin\\Release\\turbopilot
   
     
       - name: Convert backslashes
