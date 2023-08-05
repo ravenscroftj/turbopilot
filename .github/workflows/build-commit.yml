@@ -244,14 +244,14 @@ jobs:
           # Artifact name
           name: turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ steps.short-sha.outputs.sha }}-${{ matrix.build }} # optional, default is artifact
           # A file, directory or wildcard pattern that describes what to upload
-          path: ${{github.workspace}}\\build\\bin\\Release\\turbopilot
+          path: ${{github.workspace}}\\build\\bin\\Release\\turbopilot.exe
           # The desired behavior if no files are found using the provided path.
           
       - name: package artifacts for release
         if: startsWith(github.ref, 'refs/tags/')
   
         run: |
-          7z a ${{github.workspace}}\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ${{github.workspace}}\\build\\bin\\Release\\turbopilot
+          7z a ${{github.workspace}}\build\bin\Release\turbopilot-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build }}.zip ${{github.workspace}}\\build\\bin\\Release\\turbopilot.exe
   
     
       - name: Convert backslashes
