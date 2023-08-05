@@ -17,7 +17,8 @@ jobs:
       matrix:
         config:
           - {tag: "", dockerfile: "./Dockerfile.default", platforms: "linux/amd64,linux/arm64"}
-          - {tag: "-cuda", dockerfile: "./Dockerfile.cuda", platforms: "linux/amd64"}
+          - {tag: "-cuda11", dockerfile: "./Dockerfile.cuda11", platforms: "linux/amd64"}
+          - {tag: "-cuda12", dockerfile: "./Dockerfile.cuda12", platforms: "linux/amd64"}
 
     steps:
     
@@ -54,7 +55,7 @@ jobs:
         platforms: ${{matrix.config.platforms}}
 
 
-    - name: Build and push release
+    - name: Build and push release (Main Latest Build)
       uses: docker/build-push-action@v4
       if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag == ''
       with:
@@ -65,12 +66,12 @@ jobs:
         platforms: ${{matrix.config.platforms}} 
 
 
-    - name: Build and push release (CUDA)
+    - name: Build and push release (Accelerated Builds)
       uses: docker/build-push-action@v4
       if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag != ''
       with:
         file: ${{matrix.config.dockerfile}}
         push: true
-        tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}
+        tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}${{matrix.config.tag}}
         context: ${{github.workspace}}
         platforms: linux/amd64,linux/arm64  
