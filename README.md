@@ -34,6 +34,12 @@ You have 2 options for getting the model
 
 You can download the pre-converted, pre-quantized models from Huggingface.
 
+For low RAM users (4-8 GiB), I recommend [SantaCoder](https://huggingface.co/mike-ravkine/gpt_bigcode-santacoder-GGML/resolve/main/santacoder-q4_0.bin) and for high power users (16+ GiB RAM, discrete GPU or apple silicon) I recomnmend [WizardCoder](https://huggingface.co/TheBloke/WizardCoder-15B-1.0-GGML/resolve/main/WizardCoder-15B-1.0.ggmlv3.q4_0.bin).
+
+Turbopilot still supports the first generation codegen models from `v0.0.5` and earlier builds. Although old models do need to be requantized.
+
+You can find a full catalogue of models in [MODELS.md](MODELS.md).
+
 
 #### Option B: Convert The Models Yourself - Hard, More Flexible
 
@@ -57,7 +63,7 @@ If you have a multi-core system you can control how many CPUs are used with the 
 ./codegen-serve -t 6 -m starcoder -f ./models/santacoder-q4_0.bin
 ```
 
-Turbopilot also supports the legacy codegen models. Just change the model type flag `-m` to `codegen` instead.
+To run the legacy codegen models. Just change the model type flag `-m` to `codegen` instead.
 
 **NOTE: the latest version of GGML requires that you re-quantize your codegen models. Old models downloaded from here will no longer work. I am working on providing updated quantized codegen models**
 
@@ -87,10 +93,12 @@ docker run --gpus=all --rm -it \
   -e THREADS=6 \
   -e MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin" \
   -p 18080:18080 \
-  ghcr.io/ravenscroftj/turbopilot:v0.0.5-cuda
+  ghcr.io/ravenscroftj/turbopilot:v1.0.0-cuda11
 ```
 
-You will need CUDA 11 or later to run this container. You should be able to see `/app/codegen-serve` listed when you run `nvidia-smi`.
+Swap `ghcr.io/ravenscroftj/turbopilot:v1.0.0-cuda11` for `ghcr.io/ravenscroftj/turbopilot:v1.0.0-cuda12` if you are using CUDA 12 or later.
+
+You will need CUDA 11 or CUDA 12 later to run this container. You should be able to see `/app/turbopilot` listed when you run `nvidia-smi`.
 
 
 #### Executable and CUDA
