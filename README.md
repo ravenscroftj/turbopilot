@@ -10,7 +10,9 @@ TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone
 ![a screen recording of turbopilot running through fauxpilot plugin](assets/vscode-status.gif)
 
 
-**NEW:** As of v0.0.5 turbopilot supports cuda inference which greatly accelerates suggestions when working with longer prompts (i.e. longer existing code files).
+**New: Refactored + Simplified**: The source code has been improved to make it easier to extend and add new models to Turbopilot. The system now supports multiple flavours of model
+
+**New: Wizardcoder, Starcoder, Santacoder support** - Turbopilot now supports state of the art local code completion models which provide more programming languages and "fill in the middle" support.
 
 ## 🤝 Contributing
 
@@ -23,6 +25,7 @@ Make a fork, make your changes and then open a [PR](https://github.com/ravenscro
 
 The easiest way to try the project out is to grab the pre-processed models and then run the server in docker.
 
+
 ### Getting The Models
 
 You have 2 options for getting the model
@@ -30,21 +33,6 @@ You have 2 options for getting the model
 #### Option A: Direct Download - Easy, Quickstart
 
 You can download the pre-converted, pre-quantized models from Huggingface.
-
-The `multi` flavour models can provide auto-complete suggestions for `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`.
-
-The `mono` flavour models can provide auto-complete suggestions for `Python` only (but the quality of Python-specific suggestions may be higher).
-
-Pre-converted and pre-quantized models are available for download from here:
-
-| Model Name          | RAM Requirement | Supported Languages       | Direct Download  | HF Project Link |
-|---------------------|-----------------|---------------------------|-----------------|-----------------|
-| CodeGen 350M multi   | ~800MiB        | `C`, `C++`, `Go`, `Java`, `JavaScript`, `Python`  |   [:arrow_down:](https://huggingface.co/ravenscroftj/CodeGen-350M-multi-ggml-quant/resolve/main/codegen-350M-multi-ggml-4bit-quant.bin)           |   [:hugs:](https://huggingface.co/ravenscroftj/CodeGen-350M-multi-ggml-quant)           |
-| CodeGen 350M mono   | ~800MiB   | `Python`          |   [:arrow_down:](https://huggingface.co/Guglielmo/CodeGen-350M-mono-ggml-quant/resolve/main/ggml-model-quant.bin)           |   [:hugs:](https://huggingface.co/Guglielmo/CodeGen-350M-mono-ggml-quant)           |
-| CodeGen 2B multi   | ~4GiB  | `C`, `C++`, `Go`, `Java`, `JavaScript`, `Python`          |   [:arrow_down:](https://huggingface.co/ravenscroftj/CodeGen-2B-multi-ggml-quant/resolve/main/codegen-2B-multi-ggml-4bit-quant.bin)           |   [:hugs:](https://huggingface.co/ravenscroftj/CodeGen-2B-multi-ggml-quant)          |
-| CodeGen 2B mono   | ~4GiB  | `Python`          |   [:arrow_down:](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant/resolve/main/ggml-model-quant.bin)           |   [:hugs:](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant/)          |
-| CodeGen 6B multi   | ~8GiB  | `C`, `C++`, `Go`, `Java`, `JavaScript`, `Python`          |   [:arrow_down:](https://huggingface.co/ravenscroftj/CodeGen-6B-multi-ggml-quant/resolve/main/codegen-6B-multi-ggml-4bit-quant.bin)           |   [:hugs:](https://huggingface.co/ravenscroftj/CodeGen-6B-multi-ggml-quant)          |
-| CodeGen 6B mono   | ~8GiB  | `Python`          |   [:arrow_down:](https://huggingface.co/Guglielmo/CodeGen-6B-mono-ggml-quant/resolve/main/ggml-model-quant.bin)           |   [:hugs:](https://huggingface.co/Guglielmo/CodeGen-6B-mono-ggml-quant/)          |
 
 
 #### Option B: Convert The Models Yourself - Hard, More Flexible
@@ -58,16 +46,20 @@ Download the [latest binary](https://github.com/ravenscroftj/turbopilot/releases
 Run:
 
 ```bash
-./codegen-serve -m ./models/codegen-6B-multi-ggml-4bit-quant.bin
+./turbopilot -m starcoder -f ./models/santacoder-q4_0.bin
 ```
 
-The application should start a server on port `18080`
+The application should start a server on port `18080`, you can change this with the `-p` option but this is the default port that vscode-fauxpilot tries to connect to so you probably want to leave this alone unless you are sure you know what you're doing.
 
 If you have a multi-core system you can control how many CPUs are used with the `-t` option - for example, on my AMD Ryzen 5000 which has 6 cores/12 threads I use:
 
 ```bash
-./codegen-serve -t 6 -m ./models/codegen-6B-multi-ggml-4bit-quant.bin
+./codegen-serve -t 6 -m starcoder -f ./models/santacoder-q4_0.bin
 ```
+
+Turbopilot also supports the legacy codegen models. Just change the model type flag `-m` to `codegen` instead.
+
+**NOTE: the latest version of GGML requires that you re-quantize your codegen models. Old models downloaded from here will no longer work. I am working on providing updated quantized codegen models**
 
 ### 📦 Running From Docker
 
@@ -79,7 +71,8 @@ You will still need to download the models separately, then you can run:
 docker run --rm -it \
   -v ./models:/models \
   -e THREADS=6 \
-  -e MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin" \
+  -e MODEL_TYPE=starcoder \
+  -e MODEL="/models/santacoder-q4_0.bin" \
   -p 18080:18080 \
   ghcr.io/ravenscroftj/turbopilot:latest
 ```

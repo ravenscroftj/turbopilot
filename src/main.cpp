@@ -22,9 +22,15 @@ int main(int argc, char **argv)
         .help("Path to the model that turbopilot should serve")
         .required();
 
-    program.add_argument("-t", "--model-type")
-        .help("The type of model to load. Can be codegen/gpt-j or starcoder architectures.")
+    program.add_argument("-m", "--model-type")
+        .help("The type of model to load. Can be codegen,starcoder,wizardcoder")
         .default_value("codegen");
+
+    program.add_argument("-t", "--threads")
+        .help("The number of CPU threads turbopilot is allowed to use. Defaults to 4")
+        .default_value(4)
+        .scan<'i', int>();
+
 
     program.add_argument("-p", "--port")
         .help("The tcp port that turbopilot should listen on")
@@ -61,6 +67,8 @@ int main(int argc, char **argv)
 
     ModelConfig config{};
     std::mt19937 rng(program.get<int>("--random-seed"));
+
+    config.n_threads = program.get<int>("--threads");
 
     if(model_type.compare("codegen") == 0) {
         spdlog::info("Initializing GPT-J type model for '{}' model", model_type);

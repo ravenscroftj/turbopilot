@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/app/codegen-serve -t $THREADS -m $MODEL -b $BATCHSIZE
+/app/turbopilot -t $THREADS -m $MODEL_TYPE -f $MODEL 
