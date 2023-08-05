@@ -93,10 +93,10 @@ docker run --gpus=all --rm -it \
   -e THREADS=6 \
   -e MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin" \
   -p 18080:18080 \
-  ghcr.io/ravenscroftj/turbopilot:v1.0.0-cuda11
+  ghcr.io/ravenscroftj/turbopilot:v0.1.0-cuda11
 ```
 
-Swap `ghcr.io/ravenscroftj/turbopilot:v1.0.0-cuda11` for `ghcr.io/ravenscroftj/turbopilot:v1.0.0-cuda12` if you are using CUDA 12 or later.
+Swap `ghcr.io/ravenscroftj/turbopilot:v0.1.0-cuda11` for `ghcr.io/ravenscroftj/turbopilot:v0.1.0-cuda12` if you are using CUDA 12 or later.
 
 You will need CUDA 11 or CUDA 12 later to run this container. You should be able to see `/app/turbopilot` listed when you run `nvidia-smi`.
 
