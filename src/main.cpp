@@ -117,22 +117,28 @@ int main(int argc, char **argv)
         return res;
     });
 
+    //huggingface code compatible endpoint
+    CROW_ROUTE(app, "/api/generate").methods(crow::HTTPMethod::Post)
+    ([&model](const crow::request& req) {
+        return handle_hf_request(model, req);
+    });
 
     CROW_ROUTE(app, "/v1/completions").methods(crow::HTTPMethod::Post)
     ([&model](const crow::request& req) {
-        return serve_response(model, req);
+        return handle_openai_request(model, req);
     });
 
     CROW_ROUTE(app, "/v1/engines/codegen/completions").methods(crow::HTTPMethod::Post)
     ([&model](const crow::request& req) {
-        return serve_response(model, req);
+        return handle_openai_request(model, req);
     });
 
 
     CROW_ROUTE(app, "/v1/engines/copilot-codex/completions").methods(crow::HTTPMethod::Post)
     ([&model](const crow::request& req) {
-        return serve_response(model, req);
+        return handle_openai_request(model, req);
     });
+    
 
     app.port(program.get<int>("--port")).multithreaded().run();
 
