@@ -8,12 +8,14 @@ add_executable(${TURBOPILOT_TARGET}
   gptj.cpp
   gptneox.cpp
   common.cpp
+  replit.cpp
   server.cpp
   starcoder.cpp
   ../include/turbopilot/model.hpp
   ../include/turbopilot/gptj.hpp
   ../include/turbopilot/gptneox.hpp
   ../include/turbopilot/starcoder.hpp
+  ../include/turbopilot/replit.hpp
   )
 
 

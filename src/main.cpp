@@ -13,6 +13,7 @@
 #include "turbopilot/gptj.hpp"
 #include "turbopilot/gptneox.hpp"
 #include "turbopilot/server.hpp"
+#include "turbopilot/replit.hpp"
 
 int main(int argc, char **argv)
 {
@@ -24,7 +25,7 @@ int main(int argc, char **argv)
         .required();
 
     program.add_argument("-m", "--model-type")
-        .help("The type of model to load. Can be codegen,starcoder,wizardcoder,stablecode")
+        .help("The type of model to load. Can be codegen,starcoder,wizardcoder,stablecode,replit")
         .default_value("codegen");
 
     program.add_argument("-t", "--threads")
@@ -80,11 +81,14 @@ int main(int argc, char **argv)
     }else if(model_type.compare("stablecode") == 0){
         spdlog::info("Initializing StableLM type model for '{}' model type", model_type);
         model = new GPTNEOXModel(config, rng);
+    }else if(model_type.compare("replit") == 0){
+        spdlog::info("Initializing Replit type model for '{}' model type", model_type);
+        model = new ReplitModel(config, rng);
     }else{
         spdlog::error("Invalid model type: {}", model_type);
     }
 
-    spdlog::info("Attempt to load model from {}", program.get<std::string>("--model-type"));
+    spdlog::info("Attempt to load model for {}", program.get<std::string>("--model-type"));
     int64_t t_load_us = 0;
     const int64_t t_start_us = ggml_time_us();
     auto loaded = model->load_model(program.get<std::string>("--model-file"));
