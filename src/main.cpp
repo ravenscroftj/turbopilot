@@ -11,6 +11,7 @@
 #include "turbopilot/model.hpp"
 #include "turbopilot/starcoder.hpp"
 #include "turbopilot/gptj.hpp"
+#include "turbopilot/gptneox.hpp"
 #include "turbopilot/server.hpp"
 
 int main(int argc, char **argv)
@@ -23,7 +24,7 @@ int main(int argc, char **argv)
         .required();
 
     program.add_argument("-m", "--model-type")
-        .help("The type of model to load. Can be codegen,starcoder,wizardcoder")
+        .help("The type of model to load. Can be codegen,starcoder,wizardcoder,stablecode")
         .default_value("codegen");
 
     program.add_argument("-t", "--threads")
@@ -76,6 +77,9 @@ int main(int argc, char **argv)
     }else if(model_type.compare("starcoder") == 0 || model_type.compare("wizardcoder") == 0){
         spdlog::info("Initializing Starcoder/Wizardcoder type model for '{}' model type", model_type);
         model = new StarcoderModel(config, rng);
+    }else if(model_type.compare("stablecode") == 0){
+        spdlog::info("Initializing StableLM type model for '{}' model type", model_type);
+        model = new GPTNEOXModel(config, rng);
     }else{
         spdlog::error("Invalid model type: {}", model_type);
     }
