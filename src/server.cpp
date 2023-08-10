@@ -7,11 +7,51 @@
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 
+
+
 /**
  * This function serves requests for autocompletion from crow
  * 
 */
-crow::response serve_response(TurbopilotModel *model, const crow::request& req){
+crow::response handle_hf_request(TurbopilotModel *model, const crow::request& req){
+
+        crow::json::rvalue data = crow::json::load(req.body);
+
+        if(!data.has("inputs")){
+            crow::response res;
+            res.code = 400;
+            res.set_header("Content-Type", "application/json");
+            res.body = "{\"message\":\"you must specify inputs field or\"}";
+            return res;
+        }
+
+        // std::string suffix = data["suffix"].s();
+        int maxTokens = 200;
+        if(data.has("max_tokens")){
+            maxTokens = data["max_tokens"].i();
+        }
+
+
+        auto result = model->predict(data["inputs"].s(), maxTokens, false);
+
+        crow::json::wvalue response = {
+            {"generated_text", result.str()},
+        };
+        
+
+        
+        crow::response res;
+        res.code = 200;
+        res.set_header("Content-Type", "application/json");
+        res.body = response.dump(); //ss.str();
+        return res;
+}
+
+/**
+ * This function serves requests for autocompletion from crow
+ * 
+*/
+crow::response handle_openai_request(TurbopilotModel *model, const crow::request& req){
 
         crow::json::rvalue data = crow::json::load(req.body);
 
@@ -22,24 +62,6 @@ crow::response serve_response(TurbopilotModel *model, const crow::request& req){
             res.body = "{\"message\":\"you must specify a prompt or input_ids\"}";
             return res;
         }
-
-
-
-
-        // tokenize the prompt
-        // std::vector<gpt_vocab::id> embd_inp;
-        
-        // if (data.has("prompt")) {
-        //     std::string prompt = data["prompt"].s();
-        //     embd_inp = ::gpt_tokenize(vocab, prompt);
-        // }
-        //  else {
-        //     crow::json::rvalue input_ids = data["input_ids"];
-        //     for (auto id : input_ids.lo()) {
-        //         embd_inp.push_back(id.i());
-        //     }
-        // }
-
 
         // std::string suffix = data["suffix"].s();
         int maxTokens = 200;
@@ -62,14 +84,6 @@ crow::response serve_response(TurbopilotModel *model, const crow::request& req){
             {"logprobs", nullptr}
         };
         crow::json::wvalue::list choices = {choice};
-
-
-        // crow::json::wvalue usage = {
-        //     {"completion_tokens", n_past},
-        //     // {"prompt_tokens", static_cast<std::uint64_t>(embd_inp.size())},
-        //     {"prompt_tokens", 0},
-        //     {"total_tokens", static_cast<std::uint64_t>(n_past - embd_inp.size())}
-        // };
 
 
         crow::json::wvalue usage = {
