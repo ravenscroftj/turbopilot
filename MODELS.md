@@ -1,10 +1,20 @@
 # Models Directory
 
+## StableCode Instruct State-of-the-art for low Spec machines(Released 8th August 2023)
+
+[StableCode](https://stability.ai/blog/stablecode-llm-generative-ai-coding) Instruct is a new model from [Stability.ai](https://stability.ai/) which provides reasonable autocomplete suggestions in approx 3GiB of RAM.
+
+| Model Name          | RAM Requirement | Direct Download  | HF Project Link |
+|---------------------|-----------------|-----------------|-----------------|
+| StarCoder   | ~3GiB        |   [:arrow_down:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/blob/main/stablecode-instruct-alpha-3b.ggmlv1.q4_0.bin)           |   [:hugs:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/)           |
+
+
+
 ## "Coder" family models
 
 WizardCoder, StarCoder and SantaCoder are current "state-of-the-art" autocomplete models 
 
-### SantaCoder (Best Small model)
+### SantaCoder (Small Model, Reasonable on lower spec machines - Released 13/4/2023)
 
 [SantaCoder](https://huggingface.co/bigcode/santacoder) is a smaller version of the StarCoder and WizardCoder family with only 1.1 Billion parameters. The model is trained with fill-in-the-middle objective allowing it to be used to auto-complete function parameters.
 
@@ -18,7 +28,7 @@ This model is primarily trained on Python, Java and Javscript.
 To run in Turbopilot set model type `-m starcoder`
 
 
-### WizardCoder (Best Autocomplete Performance, Compute-Hungry)
+### WizardCoder 15B Best Autocomplete Performance, Compute-Hungry (Released 15/6/2023)
 
 [WizardCoder](https://github.com/nlpxucan/WizardLM/tree/main/WizardCoder) is the current SOTA auto complete model, it is an updated version of StarCoder that achieves 57.1 pass@1 on HumanEval benchmarks (essentially in 57% of cases it correctly solves a given challenge. Read more about how this metric works in the scientific paper [here](https://arxiv.org/pdf/2107.03374.pdf) ).
 
@@ -32,7 +42,7 @@ Even when quantized, WizardCoder is a large model that takes up a significant am
 To run in Turbopilot set model type `-m starcoder`
 
 
-### StarCoder
+### StarCoder (Released 4/5/2023)
 
 [StarCoder](https://huggingface.co/blog/starcoder) held the previous title of state-of-the-art coding model back in May 2023. It is still a reasonably good model by comparison but it is a similar size and has similar RAM and compute requirements to WizardCoder so you may be better off just running that. Links below provided for posterity.
 

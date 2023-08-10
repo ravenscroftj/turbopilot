@@ -6,11 +6,13 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_executable(${TURBOPILOT_TARGET} 
   main.cpp 
   gptj.cpp
+  gptneox.cpp
   common.cpp
   server.cpp
   starcoder.cpp
   ../include/turbopilot/model.hpp
   ../include/turbopilot/gptj.hpp
+  ../include/turbopilot/gptneox.hpp
   ../include/turbopilot/starcoder.hpp
   )
 
