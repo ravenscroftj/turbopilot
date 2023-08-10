@@ -66,7 +66,7 @@ If you have a multi-core system you can control how many CPUs are used with the 
 
 To run the legacy codegen models. Just change the model type flag `-m` to `codegen` instead.
 
-**NOTE: the latest version of GGML requires that you re-quantize your codegen models. Old models downloaded from here will no longer work. I am working on providing updated quantized codegen models**
+**NOTE: Turbopilot 0.1.0 and newer re-quantize your codegen models old models from v0.0.5 and older. I am working on providing updated quantized codegen models**
 
 ### 📦 Running From Docker
 
@@ -92,7 +92,8 @@ As of release v0.0.5 turbocode now supports CUDA inference. In order to run the 
 docker run --gpus=all --rm -it \
   -v ./models:/models \
   -e THREADS=6 \
-  -e MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin" \
+  -e MODEL_TYPE=starcoder \
+  -e MODEL="/models/santacoder-q4_0.bin" \
   -p 18080:18080 \
   ghcr.io/ravenscroftj/turbopilot:v0.1.0-cuda11
 ```
