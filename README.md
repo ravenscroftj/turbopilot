@@ -9,10 +9,11 @@ TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone
 
 ![a screen recording of turbopilot running through fauxpilot plugin](assets/vscode-status.gif)
 
+**✨ Now Supports [StableCode 3B Instruct](https://huggingface.co/stabilityai/stablecode-instruct-alpha-3b)** simply use [TheBloke's Quantized GGML models](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML) and set `-m stablecode`.
 
-**New: Refactored + Simplified**: The source code has been improved to make it easier to extend and add new models to Turbopilot. The system now supports multiple flavours of model
+**✨ New: Refactored + Simplified**: The source code has been improved to make it easier to extend and add new models to Turbopilot. The system now supports multiple flavours of model
 
-**New: Wizardcoder, Starcoder, Santacoder support** - Turbopilot now supports state of the art local code completion models which provide more programming languages and "fill in the middle" support.
+**✨ New: Wizardcoder, Starcoder, Santacoder support** - Turbopilot now supports state of the art local code completion models which provide more programming languages and "fill in the middle" support.
 
 ## 🤝 Contributing
 
@@ -34,7 +35,7 @@ You have 2 options for getting the model
 
 You can download the pre-converted, pre-quantized models from Huggingface.
 
-For low RAM users (4-8 GiB), I recommend [SantaCoder](https://huggingface.co/mike-ravkine/gpt_bigcode-santacoder-GGML/resolve/main/santacoder-q4_0.bin) and for high power users (16+ GiB RAM, discrete GPU or apple silicon) I recomnmend [WizardCoder](https://huggingface.co/TheBloke/WizardCoder-15B-1.0-GGML/resolve/main/WizardCoder-15B-1.0.ggmlv3.q4_0.bin).
+For low RAM users (4-8 GiB), I recommend [StableCode](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML) and for high power users (16+ GiB RAM, discrete GPU or apple silicon) I recomnmend [WizardCoder](https://huggingface.co/TheBloke/WizardCoder-15B-1.0-GGML/resolve/main/WizardCoder-15B-1.0.ggmlv3.q4_0.bin).
 
 Turbopilot still supports the first generation codegen models from `v0.0.5` and earlier builds. Although old models do need to be requantized.
 
