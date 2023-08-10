@@ -64,16 +64,16 @@ class ReplitModel : public TurbopilotModel {
 
 public:
     ReplitModel(ModelConfig config, std::mt19937 &rng) : TurbopilotModel(config, rng){
-        this->model = new replit_model{};
-        this->tokenizer = new replit_tokenizer{};
+        model = replit_model{};
+        vocab = replit_tokenizer{};
     }
     virtual ~ReplitModel();
     bool load_model(std::string path);
     virtual std::stringstream predict(std::string prompt, int max_length, bool include_prompt);
 
 private:
-    replit_model *model = NULL;
-    replit_tokenizer *tokenizer = NULL;
+    replit_model model;
+    replit_tokenizer vocab;
 
 
 };

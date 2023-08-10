@@ -34,6 +34,11 @@ int main(int argc, char **argv)
         .scan<'i', int>();
 
 
+    program.add_argument("-b", "--batch-size")
+        .help("The number of tokens to process per batch. Defaults to 64")
+        .default_value(64)
+        .scan<'i', int>();
+
     program.add_argument("-p", "--port")
         .help("The tcp port that turbopilot should listen on")
         .default_value(18080)
@@ -44,7 +49,13 @@ int main(int argc, char **argv)
         .default_value(-1)
         .scan<'i', int>();
 
+    program.add_argument("-v", "--verbose")
+        .help("if set then output debug messages")
+        .default_value(false)
+        .implicit_value(true);
+
     program.add_argument("prompt").remaining();
+
 
 
     try
@@ -58,6 +69,15 @@ int main(int argc, char **argv)
         return 1;
     }
 
+
+    auto verbose = program.get<bool>("-v");
+
+    if(verbose){
+        spdlog::set_level(spdlog::level::debug);
+        spdlog::debug("Set DEBUG=True");
+    }   
+
+
     ggml_time_init();
 
     const int64_t t_main_start_us = ggml_time_us();
@@ -70,6 +90,7 @@ int main(int argc, char **argv)
     ModelConfig config{};
     std::mt19937 rng(program.get<int>("--random-seed"));
 
+    config.n_batch = program.get<int>("-b");
     config.n_threads = program.get<int>("--threads");
 
     if(model_type.compare("codegen") == 0) {

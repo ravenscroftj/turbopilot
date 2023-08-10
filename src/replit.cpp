@@ -1,9 +1,23 @@
-#include <ggml/ggml.h>
-#include <spdlog/spdlog.h>
+#include "ggml/ggml.h"
+
 #include <turbopilot/replit.hpp>
-#include <fstream>
-#include <cstring>
+
+#include <cassert>
+#include <cmath>
 #include <cinttypes>
+#include <cstddef>
+#include <cstdio>
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <stdint.h>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include <spdlog/spdlog.h>
 
 #if defined(_WIN32)
 #define NOMINMAX
@@ -22,6 +36,10 @@ bool is_stdin_terminal() {
 #if defined(_MSC_VER)
 #pragma warning(disable: 4244 4267) // possible loss of data
 #endif
+
+using piece_t = std::pair<std::size_t, float>;
+using piece_map_t = std::unordered_map<std::string, piece_t>;
+
 
 std::pair<std::vector<std::size_t>, float> encode_word(const std::string & word, const piece_map_t & model) {
     std::vector<int> best_segmentations_starts(word.length() + 1, -1);
@@ -65,7 +83,6 @@ std::pair<std::vector<std::size_t>, float> encode_word(const std::string & word,
     tokens.insert(tokens.begin(), token_id);
     return std::make_pair(tokens, score);
 }
-
 
 bool replit_tokenizer_load(replit_tokenizer & tokenizer, std::istream & fin, int max_vocab_size) {
     std::string word;
@@ -126,9 +143,7 @@ std::string replit_tokenizer_detokenize(replit_tokenizer & tokenizer, const std:
 
 
 // load the model's weights from a file
-
-bool ReplitModel::load_model(const std::string fname) {
-
+bool replit_model_load(const std::string & fname, replit_model & model, replit_tokenizer & vocab) {
     printf("%s: loading model from '%s' - please wait ...\n", __func__, fname.c_str());
 
     auto fin = std::ifstream(fname, std::ios::binary);
@@ -149,7 +164,7 @@ bool ReplitModel::load_model(const std::string fname) {
 
     // load hparams
     {
-        auto & hparams = model->hparams;
+        auto & hparams = model.hparams;
 
         fin.read((char *)&hparams.d_model, sizeof(hparams.d_model));
         fin.read((char *)&hparams.max_seq_len, sizeof(hparams.max_seq_len));
@@ -172,24 +187,24 @@ bool ReplitModel::load_model(const std::string fname) {
     }
 
     // load vocab
-    replit_tokenizer_load((*tokenizer), fin, model->hparams.n_vocab);
+    replit_tokenizer_load(vocab, fin, model.hparams.n_vocab);
 
     // for the big tensors, we have the option to store the data in 16-bit
     // floats or quantized in order to save memory and also to speed up the
     // computation
-    ggml_type wtype = ggml_ftype_to_ggml_type((ggml_ftype)(model->hparams.ftype));
+    ggml_type wtype = ggml_ftype_to_ggml_type((ggml_ftype)(model.hparams.ftype));
     if (wtype == GGML_TYPE_COUNT) {
         fprintf(stderr, "%s: invalid model file '%s' (bad ftype value %d)\n", __func__, fname.c_str(),
-                model->hparams.ftype);
+                model.hparams.ftype);
         return false;
     }
 
-    auto & ctx = model->ctx;
+    auto & ctx = model.ctx;
 
     size_t ctx_size = 0;
 
     {
-        const auto & hparams = model->hparams;
+        const auto & hparams = model.hparams;
 
         const int n_embd = hparams.d_model;
         const int n_layer = hparams.n_layers;
@@ -209,7 +224,7 @@ bool ReplitModel::load_model(const std::string fname) {
         ctx_size += n_ctx * n_layer * n_embd * ggml_type_sizef(GGML_TYPE_F16); // memory_k
         ctx_size += n_ctx * n_layer * n_embd * ggml_type_sizef(GGML_TYPE_F16); // memory_v
 
-        ctx_size += (1 + 6 * n_layer) * 512; // object overhead
+        ctx_size += (1 + 6 * n_layer) * 1024; // object overhead
 
         printf("%s: ggml ctx size = %6.2f MB\n", __func__, ctx_size / (1024.0 * 1024.0));
     }
@@ -222,8 +237,8 @@ bool ReplitModel::load_model(const std::string fname) {
             /*.no_alloc   =*/ false,
         };
 
-        model->ctx = ggml_init(params);
-        if (!model->ctx) {
+        model.ctx = ggml_init(params);
+        if (!model.ctx) {
             fprintf(stderr, "%s: ggml_init() failed\n", __func__);
             return false;
         }
@@ -231,23 +246,23 @@ bool ReplitModel::load_model(const std::string fname) {
 
     // prepare memory for the weights
     {
-        const auto & hparams = model->hparams;
+        const auto & hparams = model.hparams;
 
         const size_t n_embd = hparams.d_model;
         const size_t n_layer = hparams.n_layers;
         const size_t n_vocab = hparams.n_vocab;
 
-        model->layers.resize(n_layer);
+        model.layers.resize(n_layer);
 
-        model->wte_weight = ggml_new_tensor_2d(ctx, wtype, n_embd, n_vocab);
-        model->norm_f_weight = ggml_new_tensor_1d(ctx, GGML_TYPE_F32, n_embd);
+        model.wte_weight = ggml_new_tensor_2d(ctx, wtype, n_embd, n_vocab);
+        model.norm_f_weight = ggml_new_tensor_1d(ctx, GGML_TYPE_F32, n_embd);
 
         // map by name
-        model->tensors["transformer.wte.weight"] = model->wte_weight;
-        model->tensors["transformer.norm_f.weight"] = model->norm_f_weight;
+        model.tensors["transformer.wte.weight"] = model.wte_weight;
+        model.tensors["transformer.norm_f.weight"] = model.norm_f_weight;
 
         for (int i = 0; i < (int)n_layer; ++i) {
-            auto & layer = model->layers[i];
+            auto & layer = model.layers[i];
 
             layer.norm_1_weight = ggml_new_tensor_1d(ctx, GGML_TYPE_F32, n_embd);
             layer.c_attn_wqkv_weight = ggml_new_tensor_2d(ctx, wtype, n_embd, 3 * n_embd);
@@ -257,19 +272,19 @@ bool ReplitModel::load_model(const std::string fname) {
             layer.ffn_down_proj = ggml_new_tensor_2d(ctx, wtype, 4 * n_embd, n_embd);
 
             // map by name
-            model->tensors["transformer.blocks." + std::to_string(i) + ".norm_1.weight"] = layer.norm_1_weight;
-            model->tensors["transformer.blocks." + std::to_string(i) + ".attn.Wqkv.weight"] = layer.c_attn_wqkv_weight;
-            model->tensors["transformer.blocks." + std::to_string(i) + ".attn.out_proj.weight"] =
+            model.tensors["transformer.blocks." + std::to_string(i) + ".norm_1.weight"] = layer.norm_1_weight;
+            model.tensors["transformer.blocks." + std::to_string(i) + ".attn.Wqkv.weight"] = layer.c_attn_wqkv_weight;
+            model.tensors["transformer.blocks." + std::to_string(i) + ".attn.out_proj.weight"] =
                 layer.c_attn_out_proj_weight;
-            model->tensors["transformer.blocks." + std::to_string(i) + ".norm_2.weight"] = layer.norm_2_weight;
-            model->tensors["transformer.blocks." + std::to_string(i) + ".ffn.up_proj.weight"] = layer.ffn_up_proj;
-            model->tensors["transformer.blocks." + std::to_string(i) + ".ffn.down_proj.weight"] = layer.ffn_down_proj;
+            model.tensors["transformer.blocks." + std::to_string(i) + ".norm_2.weight"] = layer.norm_2_weight;
+            model.tensors["transformer.blocks." + std::to_string(i) + ".ffn.up_proj.weight"] = layer.ffn_up_proj;
+            model.tensors["transformer.blocks." + std::to_string(i) + ".ffn.down_proj.weight"] = layer.ffn_down_proj;
         }
     }
 
     // key + value memory
     {
-        const auto & hparams = model->hparams;
+        const auto & hparams = model.hparams;
 
         const int n_embd = hparams.d_model;
         const int n_layer = hparams.n_layers;
@@ -278,10 +293,10 @@ bool ReplitModel::load_model(const std::string fname) {
         const int64_t n_mem = n_layer * n_ctx;
         const int64_t n_elements = n_embd * n_mem;
 
-        model->memory_k = ggml_new_tensor_1d(ctx, GGML_TYPE_F16, n_elements);
-        model->memory_v = ggml_new_tensor_1d(ctx, GGML_TYPE_F16, n_elements);
+        model.memory_k = ggml_new_tensor_1d(ctx, GGML_TYPE_F16, n_elements);
+        model.memory_v = ggml_new_tensor_1d(ctx, GGML_TYPE_F16, n_elements);
 
-        const size_t memory_size = ggml_nbytes(model->memory_k) + ggml_nbytes(model->memory_v);
+        const size_t memory_size = ggml_nbytes(model.memory_k) + ggml_nbytes(model.memory_v);
 
         printf("%s: memory_size = %8.2f MB, n_mem = %" PRIu64 "\n", __func__, memory_size / 1024.0 / 1024.0, n_mem);
     }
@@ -316,12 +331,12 @@ bool ReplitModel::load_model(const std::string fname) {
             std::string name(length, 0);
             fin.read(&name[0], length);
 
-            if (model->tensors.find(name.data()) == model->tensors.end()) {
+            if (model.tensors.find(name.data()) == model.tensors.end()) {
                 fprintf(stderr, "%s: unknown tensor '%s' in model file\n", __func__, name.data());
                 return false;
             }
 
-            auto tensor = model->tensors[name.data()];
+            auto tensor = model.tensors[name.data()];
             if (ggml_nelements(tensor) != nelements) {
                 fprintf(stderr, "%s: tensor '%s' has wrong size in model file\n", __func__, name.data());
                 return false;
@@ -369,7 +384,6 @@ bool ReplitModel::load_model(const std::string fname) {
 
     return true;
 }
-
 
 // evaluate the transformer
 //
@@ -586,43 +600,54 @@ bool replit_eval(const replit_model & model, const int n_threads, const int n_pa
 }
 
 
+
 ReplitModel::~ReplitModel(){
-    ggml_free(model->ctx);
-    free(model);
-    free(tokenizer);
+    ggml_free(model.ctx);
 }
 
 
 std::stringstream ReplitModel::predict(std::string prompt, int max_length, bool include_prompt) {
 
     std::stringstream result;
-    // tokenize the prompt
-    std::vector<std::size_t> embd_inp = replit_tokenizer_tokenize((*tokenizer), prompt);
+
 
     int n_past = 0;
 
-    int64_t t_sample_us  = 0;
+    int64_t t_sample_us = 0;
     int64_t t_predict_us = 0;
 
-    int n_predict = std::min(max_length, model->hparams.max_seq_len - (int) embd_inp.size());
+    std::vector<float> logits;
+    
 
-    spdlog::debug("{}: number of tokens in prompt = {}", __func__, embd_inp.size());
+    // tokenize the prompt
+    std::vector<std::size_t> embd_inp = replit_tokenizer_tokenize(vocab, prompt);
+
+    printf("%s: number of tokens in prompt = %zu\n", __func__, embd_inp.size());
+
+    // for (int i = 0; i < embd_inp.size(); i++) {
+    //     printf("%s: token[%d] = %6zu\n", __func__, i, embd_inp[i]);
+    //     // vocab.id_to_token.at(embd_inp[i]).c_str()
+    // }
+    printf("\n");
+
+    int n_predict = std::min(max_length, model.hparams.max_seq_len - (int) embd_inp.size() - 1);
+
+    spdlog::debug("{}: Number of characters to predict: {}", __func__, n_predict);
 
     std::vector<gpt_vocab::id> embd;
 
     // determine the required inference memory per token:
     size_t mem_per_token = 0;
+    replit_eval(model, config.n_threads, 0, {0, 1, 2, 3}, logits, false, mem_per_token);
 
-    std::vector<float> logits;
-
-    replit_eval((*model), config.n_threads, 0, { 0, 1, 2, 3 }, logits, false, mem_per_token);
+    spdlog::debug("{}: mem per token: {}", __func__, mem_per_token);
 
     for (int i = embd.size(); i < embd_inp.size() + n_predict; i++) {
         // predict
         if (embd.size() > 0) {
             const int64_t t_start_us = ggml_time_us();
 
-            if (!replit_eval((*model), config.n_threads, n_past, embd, logits, false, mem_per_token)) {
+            if (!replit_eval(model, config.n_threads, n_past, embd, logits, false, mem_per_token)) {
                 throw std::runtime_error("Failed to predict");
             }
 
@@ -634,39 +659,29 @@ std::stringstream ReplitModel::predict(std::string prompt, int max_length, bool 
 
         if (i >= embd_inp.size()) {
             // sample next token
-            const int   top_k = config.top_k;
+            const int top_k = config.top_k;
             const float top_p = config.top_p;
-            const float temp  = config.temp;
+            const float temp = config.temp;
 
-            const int n_vocab = model->hparams.n_vocab;
+            const int n_vocab = model.hparams.n_vocab;
 
             gpt_vocab::id id = 0;
 
             {
                 const int64_t t_start_sample_us = ggml_time_us();
 
-                id = gpt_sample_top_k_top_p(tokenizer->raw_vocab, logits.data() + (logits.size() - n_vocab), top_k, top_p, temp, rng);
+                id = gpt_sample_top_k_top_p(vocab.raw_vocab, logits.data() + (logits.size() - n_vocab), top_k, top_p,
+                                            temp, rng);
 
                 t_sample_us += ggml_time_us() - t_start_sample_us;
             }
 
             // add it to the context
             embd.push_back(id);
-
-            // if(id != 50256){
-            //     result << vocab->id_to_token[id].c_str();
-            // }
-            
         } else {
             // if here, it means we are still processing the input prompt
             for (int k = i; k < embd_inp.size(); k++) {
                 embd.push_back(embd_inp[k]);
-
-                if(include_prompt){
-                    result << replit_tokenizer_detokenize((*tokenizer), {static_cast<std::size_t>(embd_inp[k])});
-                    //result << vocab->id_to_token[embd_inp[k]].c_str();
-                }
-
                 if (embd.size() > config.n_batch) {
                     break;
                 }
@@ -674,11 +689,26 @@ std::stringstream ReplitModel::predict(std::string prompt, int max_length, bool 
             i += embd.size() - 1;
         }
 
+        // display text
+        for (auto id : embd) {
+            //result << replit_tokenizer_detokenize(vocab, {static_cast<std::size_t>(id)}).c_str();
+            //printf("%s", replit_tokenizer_detokenize(vocab, {static_cast<std::size_t>(id)}).c_str());
+        }
+        //fflush(stdout);
+
         // end of text token
         if (embd.back() == 0) {
             break;
         }
     }
 
+
+    // ggml_free(model.ctx);
+
+
     return result;
+}
+
+bool ReplitModel::load_model(std::string fname){
+    return replit_model_load(fname, model, vocab);
 }

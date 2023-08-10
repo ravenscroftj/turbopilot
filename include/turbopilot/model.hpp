@@ -42,7 +42,7 @@ struct ModelConfig
     float repeat_penalty = 1.10f;
     int32_t seed = -1;     // RNG seed
     int32_t n_ctx = 512;   // context size
-    int32_t n_batch = 512; // batch size for prompt processing (must be >=32 to use BLAS)
+    int32_t n_batch = 64; // batch size for prompt processing (must be >=32 to use BLAS)
 };
 
 class TurbopilotModel

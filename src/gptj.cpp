@@ -642,5 +642,6 @@ std::stringstream GPTJModel::predict(std::string prompt, int max_length, bool in
         }
     }
 
+
     return result;
 }
