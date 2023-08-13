@@ -31,6 +31,14 @@ add_subdirectory(extern/ggml)
 add_subdirectory(extern/argparse)
 add_subdirectory(extern/spdlog)
 
+if (GGML_STATIC)
+    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    SET(BUILD_SHARED_LIBS OFF)
+    SET(CMAKE_EXE_LINKER_FLAGS "-static")
+endif()
+
+
+
 add_subdirectory(src)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
