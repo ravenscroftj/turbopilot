@@ -5,6 +5,12 @@
 #include <ggml/ggml.h>
 #include <spdlog/spdlog.h>
 
+#ifdef GGML_USE_CLBLAST
+#include "ggml-opencl.h"
+#endif
+#ifdef GGML_USE_CUBLAS
+#include "ggml-cuda.h"
+#endif
 
 // evaluate the transformer
 //
@@ -36,10 +42,10 @@ bool starcoder_eval(
 
     // use 2 scratch buffers
     // TODO: very hacky solution - reimplement in a more elegant way
-    static size_t scr0_size = 256u*1024*1024;
+    static size_t scr0_size = 512u*1024*1024;
     static void * scr0 = malloc(scr0_size);
 
-    static size_t scr1_size = 256u*1024*1024;
+    static size_t scr1_size = 512u*1024*1024;
     static void * scr1 = malloc(scr1_size);
 
     if (mem_per_token > 0 && mem_per_token*N > buf_size) {
@@ -676,6 +682,43 @@ bool StarcoderModel::load_model(std::string fname) {
     }
 
     fin.close();
+
+
+    #if defined(GGML_USE_CLBLAST) || defined(GGML_USE_CUBLAS)
+
+    printf("inside ggml clblast check\n");
+
+    if(config.n_gpu_layers > 0){
+        size_t vram_total = 0;
+        int gpu_layers = std::min(config.n_gpu_layers, model->hparams.n_layer);
+        spdlog::info("Attempting to offload %d layers to GPU", gpu_layers);
+
+
+        for(int i=0; i < gpu_layers; i++) {
+            const auto & layer = model->layers[i];
+            layer.c_attn_attn_w->backend = GGML_BACKEND_GPU;
+            layer.c_attn_proj_w->backend = GGML_BACKEND_GPU;
+            layer.c_mlp_fc_w->backend = GGML_BACKEND_GPU;
+            layer.c_mlp_proj_w->backend = GGML_BACKEND_GPU;
+
+            #if defined(GGML_USE_CLBLAST)
+            ggml_cl_transform_tensor(layer.c_attn_attn_w->data,layer.c_attn_attn_w); vram_total += ggml_nbytes(layer.c_attn_attn_w);
+            ggml_cl_transform_tensor(layer.c_attn_proj_w->data,layer.c_attn_proj_w); vram_total += ggml_nbytes(layer.c_attn_proj_w);
+            ggml_cl_transform_tensor(layer.c_mlp_fc_w->data,layer.c_mlp_fc_w); vram_total += ggml_nbytes(layer.c_mlp_fc_w);
+            ggml_cl_transform_tensor(layer.c_mlp_proj_w->data,layer.c_mlp_proj_w); vram_total += ggml_nbytes(layer.c_mlp_proj_w);
+            #else
+            ggml_cuda_transform_tensor(layer.c_attn_attn_w->data,layer.c_attn_attn_w); vram_total += ggml_nbytes(layer.c_attn_attn_w);
+            ggml_cuda_transform_tensor(layer.c_attn_proj_w->data,layer.c_attn_proj_w); vram_total += ggml_nbytes(layer.c_attn_proj_w);
+            ggml_cuda_transform_tensor(layer.c_mlp_fc_w->data,layer.c_mlp_fc_w); vram_total += ggml_nbytes(layer.c_mlp_fc_w);
+            ggml_cuda_transform_tensor(layer.c_mlp_proj_w->data,layer.c_mlp_proj_w); vram_total += ggml_nbytes(layer.c_mlp_proj_w);
+            #endif
+        }
+
+        fprintf(stderr, "%s: [GPU] total VRAM used: %zu MB\n", __func__, vram_total / 1024 / 1024);
+    }
+    
+    #endif // defined(GGML_USE_CLBLAST) || defined(GGML_USE_CUBLAS)
+
 
     return true;
 }
