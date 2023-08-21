@@ -33,6 +33,12 @@ int main(int argc, char **argv)
         .scan<'i', int>();
 
 
+    program.add_argument("--ngl", "--n-gpu-layers")
+        .help("The number of layers to offload to GPU")
+        .default_value(0)
+        .scan<'i', int>();
+
+
     program.add_argument("-p", "--port")
         .help("The tcp port that turbopilot should listen on")
         .default_value(18080)
@@ -70,6 +76,7 @@ int main(int argc, char **argv)
     std::mt19937 rng(program.get<int>("--random-seed"));
 
     config.n_threads = program.get<int>("--threads");
+    config.n_gpu_layers = program.get<int>("--ngl");
 
     if(model_type.compare("codegen") == 0) {
         spdlog::info("Initializing GPT-J type model for '{}' model", model_type);
