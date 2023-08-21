@@ -40,6 +40,13 @@ int main(int argc, char **argv)
         .default_value(4)
         .scan<'i', int>();
 
+
+    program.add_argument("--ngl", "--n-gpu-layers")
+        .help("The number of layers to offload to GPU")
+        .default_value(0)
+        .scan<'i', int>();
+
+
     program.add_argument("-p", "--port")
         .help("The tcp port that turbopilot should listen on")
         .default_value(18080)
@@ -96,6 +103,7 @@ int main(int argc, char **argv)
     config.n_threads = program.get<int>("--threads");
     config.temp = program.get<float>("--temperature");
     config.top_p = program.get<float>("--top-p");
+    config.n_gpu_layers = program.get<int>("--ngl");
 
     if(model_type.compare("codegen") == 0) {
         spdlog::info("Initializing GPT-J type model for '{}' model", model_type);
