@@ -65,6 +65,17 @@ if (GGML_CUBLAS)
     endif()
 endif()
 
+if (GGML_CUBLAS)
+    cmake_minimum_required(VERSION 3.17)
+
+    find_package(CUDAToolkit)
+    if (CUDAToolkit_FOUND)
+        add_compile_definitions(GGML_USE_CUBLAS)
+    else()
+        message(WARNING "cuBLAS not found")
+    endif()
+endif()
+
 
 
 add_subdirectory(src)
