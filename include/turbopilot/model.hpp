@@ -44,6 +44,7 @@ struct ModelConfig
     int32_t seed = -1;     // RNG seed
     int32_t n_ctx = 512;   // context size
     int32_t n_batch = 512; // batch size for prompt processing (must be >=32 to use BLAS)
+    int32_t n_gpu_layers = 0;
 };
 
 class TurbopilotModel
