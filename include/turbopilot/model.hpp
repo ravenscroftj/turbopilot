@@ -62,4 +62,5 @@ protected:
     std::mt19937 &rng;
 };
 
+
 #endif //__TURBOPILOT_MODEL_H
