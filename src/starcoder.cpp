@@ -691,7 +691,7 @@ bool StarcoderModel::load_model(std::string fname) {
     if(config.n_gpu_layers > 0){
         size_t vram_total = 0;
         int gpu_layers = std::min(config.n_gpu_layers, model->hparams.n_layer);
-        spdlog::info("Attempting to offload %d layers to GPU", gpu_layers);
+        spdlog::info("Attempting to offload {} layers to GPU", gpu_layers);
 
 
         for(int i=0; i < gpu_layers; i++) {
