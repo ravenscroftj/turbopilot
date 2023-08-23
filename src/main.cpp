@@ -14,10 +14,18 @@
 #include "turbopilot/gptneox.hpp"
 #include "turbopilot/server.hpp"
 
+
+#define TURBOPILOT_VERSION "1.1.0"
+
 int main(int argc, char **argv)
 {
 
-    argparse::ArgumentParser program("turbopilot");
+    argparse::ArgumentParser program("turbopilot", TURBOPILOT_VERSION);
+
+    program.add_argument("--debug")
+        .default_value(false)
+        .help("Output verbose logs and timings")
+        .implicit_value(true);
 
     program.add_argument("-f", "--model-file")
         .help("Path to the model that turbopilot should serve")
@@ -56,6 +64,7 @@ int main(int argc, char **argv)
     program.add_argument("prompt").remaining();
 
 
+
     try
     {
         program.parse_args(argc, argv);
@@ -65,6 +74,11 @@ int main(int argc, char **argv)
         std::cerr << err.what() << std::endl;
         std::cerr << program;
         return 1;
+    }
+
+    if(program.get<bool>("--debug")){
+        spdlog::set_level(spdlog::level::level_enum::debug);
+        spdlog::debug("debug logging enabled");
     }
 
     ggml_time_init();

@@ -638,6 +638,12 @@ std::stringstream GPTNEOXModel::predict(std::string prompt, int max_length, bool
 
     gpt_neox_eval((*model), config.n_threads, 0, { 0, 1, 2, 3 }, logits, mem_per_token);
 
+    const int64_t t_start_us = ggml_time_us();
+
+    int64_t t_prompt_us = 0;
+    
+    int64_t t_response_us = 0;
+
     for (int i = embd.size(); i < embd_inp.size() + n_predict; i++) {
         // predict
         if (embd.size() > 0) {
@@ -694,7 +700,8 @@ std::stringstream GPTNEOXModel::predict(std::string prompt, int max_length, bool
             }
             i += embd.size() - 1;
         }
-        
+
+
 
         // end of text token
         //if (embd.back() == 50256) {
@@ -702,6 +709,11 @@ std::stringstream GPTNEOXModel::predict(std::string prompt, int max_length, bool
             break;
         }
     }
+
+    spdlog::debug("{}:   sample time = {:8.2f} ms\n", __func__, t_sample_us/1000.0f);
+    spdlog::debug("{}:  predict time = {:8.2f} ms / {:.2f} ms per token\n", __func__, t_predict_us/1000.0f, t_predict_us/1000.0f/n_past);
+    
+    
 
     return result;
 }

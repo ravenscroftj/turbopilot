@@ -766,6 +766,10 @@ std::stringstream StarcoderModel::predict(std::string prompt, int max_length, bo
             break;
         }
     }
+    spdlog::debug("{}:   sample time = {:8.2f} ms\n", __func__, t_sample_us/1000.0f);
+    spdlog::debug("{}:  predict time = {:8.2f} ms / {:.2f} ms per token\n", __func__, t_predict_us/1000.0f, t_predict_us/1000.0f/n_past);
+    
+    
 
     return result;
 }
