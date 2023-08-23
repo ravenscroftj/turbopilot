@@ -44,13 +44,13 @@ int main(int argc, char **argv)
 
     program.add_argument("--temperature")
         .help("Set the generation temperature")
-        .default_value(0.2)
-        .scan<'g', double>();
+        .default_value(0.2f)
+        .scan<'g', float>();
 
     program.add_argument("--top-p")
         .help("Set the generation top_p")
-        .default_value(0.1)
-        .scan<'g', double>();
+        .default_value(0.1f)
+        .scan<'g', float>();
 
 
     program.add_argument("prompt").remaining();
