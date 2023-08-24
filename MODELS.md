@@ -6,9 +6,9 @@
 
 | Model Name          | RAM Requirement | Direct Download  | HF Project Link |
 |---------------------|-----------------|-----------------|-----------------|
-| StarCoder   | ~3GiB        |   [:arrow_down:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/blob/main/stablecode-instruct-alpha-3b.ggmlv1.q4_0.bin)           |   [:hugs:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/)           |
+| StableCode   | ~3GiB        |   [:arrow_down:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/blob/main/stablecode-instruct-alpha-3b.ggmlv1.q4_0.bin)           |   [:hugs:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/)           |
 
-
+To run in Turbopilot set model type `-m stablecode`
 
 ## "Coder" family models
 
@@ -23,7 +23,7 @@ This model is primarily trained on Python, Java and Javscript.
 
 | Model Name          | RAM Requirement | Direct Download  | HF Project Link |
 |---------------------|-----------------|-----------------|-----------------|
-| StarCoder   | ~2GiB        |   [:arrow_down:](https://huggingface.co/mike-ravkine/gpt_bigcode-santacoder-GGML/resolve/main/santacoder-q4_0.bin)           |   [:hugs:](https://huggingface.co/mike-ravkine/gpt_bigcode-santacoder-GGML/)           |
+| SantaCoder   | ~2GiB        |   [:arrow_down:](https://huggingface.co/mike-ravkine/gpt_bigcode-santacoder-GGML/resolve/main/santacoder-q4_0.bin)           |   [:hugs:](https://huggingface.co/mike-ravkine/gpt_bigcode-santacoder-GGML/)           |
 
 To run in Turbopilot set model type `-m starcoder`
 
@@ -39,7 +39,7 @@ Even when quantized, WizardCoder is a large model that takes up a significant am
 |---------------------|-----------------|-----------------|-----------------|
 | WizardCoder   | ~12GiB        |   [:arrow_down:](https://huggingface.co/TheBloke/WizardCoder-15B-1.0-GGML/resolve/main/WizardCoder-15B-1.0.ggmlv3.q4_0.bin)           |   [:hugs:](https://huggingface.co/TheBloke/WizardCoder-15B-1.0-GGML/)           |
 
-To run in Turbopilot set model type `-m starcoder`
+To run in Turbopilot set model type `-m wizardcoder`
 
 
 ### StarCoder (Released 4/5/2023)
