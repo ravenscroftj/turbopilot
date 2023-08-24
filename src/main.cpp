@@ -60,6 +60,11 @@ int main(int argc, char **argv)
         .default_value(0.1f)
         .scan<'g', float>();
 
+    program.add_argument("-b", "--batch-size")
+        .help("set batch size for model completion")
+        .default_value(512)
+        .scan<'i',int>();
+
 
     program.add_argument("prompt").remaining();
 
@@ -96,6 +101,7 @@ int main(int argc, char **argv)
     config.n_threads = program.get<int>("--threads");
     config.temp = program.get<float>("--temperature");
     config.top_p = program.get<float>("--top-p");
+    config.n_batch = program.get<int>("--batch-size");
 
     if(model_type.compare("codegen") == 0) {
         spdlog::info("Initializing GPT-J type model for '{}' model", model_type);
@@ -130,6 +136,7 @@ int main(int argc, char **argv)
     CROW_ROUTE(app, "/")([](){
         return "Hello world";
     });
+
 
     CROW_ROUTE(app, "/copilot_internal/v2/token")([](){
         //return "Hello world";
