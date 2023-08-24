@@ -1,7 +1,14 @@
 cmake_minimum_required (VERSION 3.0)
 project(turbopilot VERSION 0.1.0)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED true)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED true)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 
-option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+
+# option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS "on")
@@ -31,16 +38,21 @@ endif()
 
 
 
-if (GGML_STATIC)
-    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-    SET(BUILD_SHARED_LIBS OFF)
-    SET(CMAKE_EXE_LINKER_FLAGS "-static")
-endif()
 
 
 add_subdirectory(extern/ggml)
 add_subdirectory(extern/argparse)
 add_subdirectory(extern/spdlog)
+
+if (GGML_STATIC)
+    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    SET(BUILD_SHARED_LIBS OFF)
+    SET(CMAKE_EXE_LINKER_FLAGS "-static")
+
+    # if(GGML_OPENBLAS)
+    #     set(BLA_STATIC ON)
+    # endif()
+endif()
 
 
 add_subdirectory(src)
