@@ -1,6 +1,7 @@
 set(TURBOPILOT_TARGET turbopilot)
 
-find_package(Boost REQUIRED)
+find_package(Boost COMPONENTS thread system REQUIRED)
+
 include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(${TURBOPILOT_TARGET} 
@@ -24,7 +25,8 @@ target_include_directories(${TURBOPILOT_TARGET} PRIVATE
 )
 
 
-target_link_libraries(${TURBOPILOT_TARGET} PRIVATE ggml argparse)
+
+target_link_libraries(${TURBOPILOT_TARGET} PRIVATE ggml argparse Boost::thread)
 
 
 #target_link_libraries(${TURBOPILOT_TARGET} PRIVATE spdlog::spdlog_header_only)
