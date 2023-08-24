@@ -214,7 +214,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. ${{ matrix.defines }}
+          cmake .. ${{ matrix.defines }} -DBoost_LIBRARY_DIRS=${{steps.install-boost.outputs.BOOST_ROOT}}/lib
           cmake --build . --config Release --target turbopilot
 
       # - name: Add libopenblas.dll
