@@ -7,7 +7,7 @@
 #include <map>
 #include <vector>
 #include <random>
-#include <boost/thread.hpp>
+#include <mutex>
 
 typedef void (*offload_func_t)(struct ggml_tensor * tensor);
 void ggml_nop(struct ggml_tensor * tensor);
@@ -64,7 +64,7 @@ protected:
     virtual std::stringstream predict_impl(std::string prompt, int max_length, bool include_prompt) = 0;
     ModelConfig config;
     std::mt19937 &rng;
-    boost::mutex model_lock;
+    std::mutex model_lock;
 };
 
 #endif //__TURBOPILOT_MODEL_H
