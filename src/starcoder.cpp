@@ -44,13 +44,13 @@ bool starcoder_eval(
 
     if (mem_per_token > 0 && mem_per_token*N > buf_size) {
         const size_t buf_size_new = 1.1*(mem_per_token*N); // add 10% to account for ggml object overhead
-        //printf("\n%s: reallocating buffer from %zu to %zu bytes\n", __func__, buf_size, buf_size_new);
+        spdlog::debug("{}: reallocating buffer from {} to {} bytes\n", __func__, buf_size, buf_size_new);
 
         // reallocate
         buf_size = buf_size_new;
         buf = realloc(buf, buf_size);
         if (buf == nullptr) {
-            fprintf(stderr, "%s: failed to allocate %zu bytes\n", __func__, buf_size);
+            spdlog::error("{}: failed to allocate {} bytes\n", __func__, buf_size);
             return false;
         }
     }
@@ -681,7 +681,7 @@ bool StarcoderModel::load_model(std::string fname) {
 }
 
 
-std::stringstream StarcoderModel::predict(std::string prompt, int max_length, bool include_prompt) {
+std::stringstream StarcoderModel::predict_impl(std::string prompt, int max_length, bool include_prompt) {
 
     std::stringstream result;
     // tokenize the prompt

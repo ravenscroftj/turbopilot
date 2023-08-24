@@ -75,7 +75,7 @@ public:
     }
     virtual ~GPTNEOXModel();
     bool load_model(std::string path);
-    virtual std::stringstream predict(std::string prompt, int max_length, bool include_prompt);
+    virtual std::stringstream predict_impl(std::string prompt, int max_length, bool include_prompt);
 
 private:
     gpt_neox_model *model = NULL;

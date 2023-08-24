@@ -4,6 +4,22 @@
 #include <cmath>
 #include <random>
 
+
+void TurbopilotModel::lock(){
+    this->model_lock.lock();
+}
+
+void TurbopilotModel::unlock(){
+    this->model_lock.unlock();
+}
+
+std::stringstream TurbopilotModel::predict(std::string prompt, int max_length, bool include_prompt){
+    lock();
+    auto result = predict_impl(prompt, max_length, include_prompt);
+    unlock();
+    return result;
+}
+
 void llama_nop(struct ggml_tensor * tensor) { // don't offload by default
     (void) tensor;
 }
@@ -164,3 +180,5 @@ gpt_vocab::id gpt_sample_top_k_top_p(
 
     return logits_id[idx].second;
 }
+
+

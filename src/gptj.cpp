@@ -556,7 +556,7 @@ bool GPTJModel::load_model(std::string fname) {
     return true;
 }
 
-std::stringstream GPTJModel::predict(std::string prompt, int max_length, bool include_prompt) {
+std::stringstream GPTJModel::predict_impl(std::string prompt, int max_length, bool include_prompt) {
 
     std::stringstream result;
     // tokenize the prompt

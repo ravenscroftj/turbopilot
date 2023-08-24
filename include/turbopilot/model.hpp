@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <random>
+#include <boost/thread.hpp>
 
 typedef void (*offload_func_t)(struct ggml_tensor * tensor);
 void ggml_nop(struct ggml_tensor * tensor);
@@ -54,11 +55,16 @@ public:
         rng(rng) 
     {}
     virtual bool load_model(std::string model_path) = 0;
-    virtual std::stringstream predict(std::string prompt, int max_length, bool include_prompt) = 0;
+    std::stringstream predict(std::string prompt, int max_length, bool include_prompt);
+    void lock();
+    void unlock();
+
 
 protected:
+    virtual std::stringstream predict_impl(std::string prompt, int max_length, bool include_prompt) = 0;
     ModelConfig config;
     std::mt19937 &rng;
+    boost::mutex model_lock;
 };
 
 #endif //__TURBOPILOT_MODEL_H

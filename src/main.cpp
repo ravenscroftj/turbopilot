@@ -121,11 +121,16 @@ int main(int argc, char **argv)
     }
 
     t_load_us = ggml_time_us() - t_start_us;
+    
 
     spdlog::info("Loaded model in {:0.2f}ms", t_load_us/1000.0f);
 
 
     crow::SimpleApp app;
+
+    TBPLogger logger;
+
+    crow::logger::setHandler(&logger);
 
     CROW_ROUTE(app, "/")([](){
         return "Hello world";
@@ -167,6 +172,8 @@ int main(int argc, char **argv)
     
 
     app.port(program.get<int>("--port")).multithreaded().run();
+
+    
 
     free(model);
 }
