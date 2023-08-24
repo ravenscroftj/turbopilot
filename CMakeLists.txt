@@ -1,6 +1,9 @@
 cmake_minimum_required (VERSION 3.0)
 project(turbopilot VERSION 0.1.0)
 
+option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS "on")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
@@ -27,9 +30,6 @@ if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES
 endif()
 
 
-add_subdirectory(extern/ggml)
-add_subdirectory(extern/argparse)
-add_subdirectory(extern/spdlog)
 
 if (GGML_STATIC)
     SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
@@ -37,6 +37,10 @@ if (GGML_STATIC)
     SET(CMAKE_EXE_LINKER_FLAGS "-static")
 endif()
 
+
+add_subdirectory(extern/ggml)
+add_subdirectory(extern/argparse)
+add_subdirectory(extern/spdlog)
 
 
 add_subdirectory(src)

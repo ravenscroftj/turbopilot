@@ -17,6 +17,9 @@ add_executable(${TURBOPILOT_TARGET}
   ../include/turbopilot/starcoder.hpp
   )
 
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
 
 target_include_directories(${TURBOPILOT_TARGET} PRIVATE
   ../include
@@ -26,7 +29,7 @@ target_include_directories(${TURBOPILOT_TARGET} PRIVATE
 
 
 
-target_link_libraries(${TURBOPILOT_TARGET} PRIVATE ggml argparse Boost::thread)
+target_link_libraries(${TURBOPILOT_TARGET} PRIVATE ggml argparse Threads::Threads)
 
 
 #target_link_libraries(${TURBOPILOT_TARGET} PRIVATE spdlog::spdlog_header_only)
