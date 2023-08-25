@@ -37,7 +37,6 @@ crow::response handle_hf_request(TurbopilotModel *model, const crow::request& re
         crow::json::wvalue response = {
             {"generated_text", result.str()},
         };
-        
 
         
         crow::response res;

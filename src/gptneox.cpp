@@ -91,6 +91,7 @@ bool gpt_neox_eval(
         const size_t buf_size_new = 1.1*(mem_per_token*N); // add 10% to account for ggml object overhead
         //printf("\n%s: reallocating buffer from %zu to %zu bytes\n", __func__, buf_size, buf_size_new);
 
+        
         // reallocate
         buf_size = buf_size_new;
         buf = realloc(buf, buf_size);
@@ -98,6 +99,8 @@ bool gpt_neox_eval(
             fprintf(stderr, "%s: failed to allocate %zu bytes\n", __func__, buf_size);
             return false;
         }
+
+        spdlog::debug("{}: reallocating context buffer {} -> now {} bytes of tokens in prompt = {}", __func__, buf_size, buf_size_new);
     }
 
     struct ggml_init_params params = {
@@ -283,6 +286,7 @@ bool gpt_neox_eval(
     //    ggml_graph_print   (&gf);
     //    ggml_graph_dump_dot(&gf, NULL, "gpt-2.dot");
     //}
+    
 
     //embd_w.resize(n_vocab*N);
     //memcpy(embd_w.data(), ggml_get_data(inpL), sizeof(float)*n_vocab*N);
@@ -293,7 +297,9 @@ bool gpt_neox_eval(
 
     if (mem_per_token == 0) {
         mem_per_token = ggml_used_mem(ctx0)/N;
+        
     }
+    spdlog::debug("used_mem = {}\n", ggml_used_mem(ctx0));
     //printf("used_mem = %zu\n", ggml_used_mem(ctx0));
 
     ggml_free(ctx0);
@@ -612,7 +618,7 @@ bool GPTNEOXModel::load_model(std::string fname) {
     return true;
 }
 
-std::stringstream GPTNEOXModel::predict(std::string prompt, int max_length, bool include_prompt) {
+std::stringstream GPTNEOXModel::predict_impl(std::string prompt, int max_length, bool include_prompt) {
 
     std::stringstream result;
     // tokenize the prompt
@@ -630,6 +636,8 @@ std::stringstream GPTNEOXModel::predict(std::string prompt, int max_length, bool
     spdlog::debug("{}: number of tokens in prompt = {}", __func__, embd_inp.size());
 
     std::vector<gpt_vocab::id> embd;
+
+
 
     // determine the required inference memory per token:
     size_t mem_per_token = 0;
@@ -717,3 +725,4 @@ std::stringstream GPTNEOXModel::predict(std::string prompt, int max_length, bool
 
     return result;
 }
+

@@ -92,7 +92,7 @@ jobs:
         submodules: true
 
     - name: Install Dependencies
-      run: sudo apt-get update && sudo apt-get install -yq libboost-dev libasio-dev
+      run: sudo apt-get update && sudo apt-get install -yq libboost-dev libasio-dev libboost-thread-dev
 
     - name: Install OpenBlas
       if: ${{ matrix.build == 'avx2-openblas' }}
@@ -207,6 +207,7 @@ jobs:
           $msvc = $(join-path $vcdir $('VC\Tools\MSVC\'+$(gc -raw $(join-path $vcdir 'VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt')).Trim()))
           $lib =  $(join-path $msvc 'bin\Hostx64\x64\lib.exe')
           & $lib /machine:x64 "/def:${env:RUNNER_TEMP}/openblas/lib/libopenblas.def" "/out:${env:RUNNER_TEMP}/openblas/lib/openblas.lib" /name:openblas.dll
+
       - name: Build
         id: cmake_build
         env:
@@ -214,7 +215,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. ${{ matrix.defines }}
+          cmake .. ${{ matrix.defines }} -DBoost_LIBRARYDIRS=${{ steps.install-boost.outputs.BOOST_ROOT }}/lib
           cmake --build . --config Release --target turbopilot
 
       # - name: Add libopenblas.dll
