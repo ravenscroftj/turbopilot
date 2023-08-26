@@ -25,7 +25,6 @@ jobs:
     - name: Dependencies
       id: depends
       run: |
-        brew update
         brew install cmake boost asio
     - name: Build
       id: make_build
