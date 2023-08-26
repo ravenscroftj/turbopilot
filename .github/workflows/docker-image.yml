@@ -18,13 +18,44 @@ jobs:
         config:
           - {tag: "", dockerfile: "./Dockerfile.default", platforms: "linux/amd64,linux/arm64", build_args: "" }
           - {
-              tag: "openblas", 
+              tag: "-openblas", 
               dockerfile: "./Dockerfile.default", 
               platforms: "linux/amd64,linux/arm64", 
               build_args: "EXTRA_DEPS=\"libopenblas-dev\" CMAKE_ARGS=\"-DGGML_OPENBLAS=On\""
             }
-          - {tag: "-cuda11", dockerfile: "./Dockerfile.cuda11", platforms: "linux/amd64", build_args: "" }
-          - {tag: "-cuda12", dockerfile: "./Dockerfile.cuda12", platforms: "linux/amd64", build_args: "" }
+          - {
+              tag: "-cuda11-7", 
+              dockerfile: "./Dockerfile.default", 
+              platforms: "linux/amd64", 
+              build_args: "\
+              BUILD_BASE=nvidia/cuda:11.7.1-devel-ubuntu22.04 \
+              RUNTIME_BASE=nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04 \
+              CMAKE_ARGS=\"-DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc\"" 
+            }
+          - {
+              tag: "-cuda12-0", 
+              dockerfile: "./Dockerfile.default", 
+              platforms: "linux/amd64", 
+              build_args: "\
+              BUILD_BASE=nvidia/cuda:12.0.0-devel-ubuntu20.04  \
+              RUNTIME_BASE=nvidia/cuda:12.0.0-runtime-ubuntu20.04 \
+              CMAKE_ARGS=\"-DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc\"" 
+            }
+          - {
+              tag: "-cuda12-2", 
+              dockerfile: "./Dockerfile.default", 
+              platforms: "linux/amd64", 
+              build_args: "\
+              BUILD_BASE=nvidia/cuda:12.2.0-devel-ubuntu20.04  \
+              RUNTIME_BASE=nvidia/cuda:12.2.0-runtime-ubuntu20.04 \
+              CMAKE_ARGS=\"-DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc\"" 
+            }
+          - {
+              tag: "-clblast", 
+              dockerfile: "./Dockerfile.default", 
+              platforms: "linux/amd64", 
+              build_args: "EXTRA_DEPS=\"libclblast-dev\" CMAKE_ARGS=\"-DGGML_CLBLAST=On\""
+            }
 
     steps:
     

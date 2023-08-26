@@ -1,7 +1,9 @@
 ARG EXTRA_DEPS=""
 ARG CMAKE_ARGS=""
+ARG BUILD_BASE="ubuntu:22.04"
+ARG RUNTIME_BASE="ubuntu:22.04"
 
-FROM ubuntu:22.04 AS build
+FROM ${BUILD_BASE} AS build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -21,7 +23,7 @@ WORKDIR  /turbopilot/build
 RUN cmake .. ${CMAKE_ARGS}
 RUN make turbopilot
 
-FROM ubuntu:22.04 AS runtime
+FROM ${RUNTIME_BASE} AS runtime
 
 
 WORKDIR /app
