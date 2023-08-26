@@ -16,18 +16,15 @@ jobs:
     strategy:
       matrix:
         config:
-          - {tag: "", dockerfile: "./Dockerfile.default", platforms: "linux/amd64,linux/arm64", build_args: [] }
+          - {tag: "", dockerfile: "./Dockerfile.default", platforms: "linux/amd64,linux/arm64", build_args: "" }
           - {
               tag: "openblas", 
               dockerfile: "./Dockerfile.default", 
               platforms: "linux/amd64,linux/arm64", 
-              build_args: [
-                "EXTRA_DEPS=libopenblas-dev",
-                "CMAKE_ARGS=\"-DGGML_OPENBLAS=On\""
-              ]
+              build_args: "EXTRA_DEPS=\"libopenblas-dev\" CMAKE_ARGS=\"-DGGML_OPENBLAS=On\""
             }
-          - {tag: "-cuda11", dockerfile: "./Dockerfile.cuda11", platforms: "linux/amd64", build_args: [] }
-          - {tag: "-cuda12", dockerfile: "./Dockerfile.cuda12", platforms: "linux/amd64", build_args: [] }
+          - {tag: "-cuda11", dockerfile: "./Dockerfile.cuda11", platforms: "linux/amd64", build_args: "" }
+          - {tag: "-cuda12", dockerfile: "./Dockerfile.cuda12", platforms: "linux/amd64", build_args: "" }
 
     steps:
     
@@ -54,7 +51,7 @@ jobs:
         password: ${{ secrets.GH_TOKEN }}
 
     - name: Build and push incremental
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v4.1.1
       if: (!startsWith(github.ref, 'refs/tags/'))
       with:
         file: ${{matrix.config.dockerfile}}
@@ -63,7 +60,6 @@ jobs:
         context: ${{github.workspace}}
         platforms: ${{matrix.config.platforms}}
         build-args: ${{matrix.config.build_args}}
-
 
 
     - name: Build and push release (Main Latest Build)
