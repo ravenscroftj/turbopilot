@@ -53,14 +53,14 @@ jobs:
             runtime_base: nvidia/cuda:12.2.0-runtime-ubuntu22.04
             cmake_args: -DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
           
-          - tag: -clblast
-            dockerfile: ./Dockerfile.default
-            platforms: linux/amd64
-            build_base: ubuntu:22.04
-            runtime_base: ubuntu:22.04
-            runtime_deps: libclblast1
-            extra_deps: libclblast-dev
-            cmake_args: -DGGML_CLBLAST=On
+          # - tag: -clblast
+          #   dockerfile: ./Dockerfile.default
+          #   platforms: linux/amd64
+          #   build_base: ubuntu:22.04
+          #   runtime_base: ubuntu:22.04
+          #   runtime_deps: libclblast1
+          #   extra_deps: libclblast-dev
+          #   cmake_args: -DGGML_CLBLAST=On
             
 
     steps:
