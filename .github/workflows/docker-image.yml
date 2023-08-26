@@ -16,9 +16,18 @@ jobs:
     strategy:
       matrix:
         config:
-          - {tag: "", dockerfile: "./Dockerfile.default", platforms: "linux/amd64,linux/arm64"}
-          - {tag: "-cuda11", dockerfile: "./Dockerfile.cuda11", platforms: "linux/amd64"}
-          - {tag: "-cuda12", dockerfile: "./Dockerfile.cuda12", platforms: "linux/amd64"}
+          - {tag: "", dockerfile: "./Dockerfile.default", platforms: "linux/amd64,linux/arm64", build_args: {} }
+          - {
+              tag: "openblas", 
+              dockerfile: "./Dockerfile.default", 
+              platforms: "linux/amd64,linux/arm64", 
+              build_args: {
+                "EXTRA_DEPS":"libopenblas-dev",
+                "CMAKE_ARGS": "-DGGML_OPENBLAS=On"
+              }
+            }
+          - {tag: "-cuda11", dockerfile: "./Dockerfile.cuda11", platforms: "linux/amd64", build_args: {} }
+          - {tag: "-cuda12", dockerfile: "./Dockerfile.cuda12", platforms: "linux/amd64", build_args: {} }
 
     steps:
     
@@ -53,6 +62,8 @@ jobs:
         tags: ghcr.io/ravenscroftj/turbopilot:nightly${{matrix.config.tag}}-${{ github.sha }}
         context: ${{github.workspace}}
         platforms: ${{matrix.config.platforms}}
+        build-args: ${{matrix.config.build_args}}
+
 
 
     - name: Build and push release (Main Latest Build)
@@ -64,6 +75,7 @@ jobs:
         tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}, ghcr.io/ravenscroftj/turbopilot:latest
         context: ${{github.workspace}}
         platforms: ${{matrix.config.platforms}} 
+        build-args: ${{matrix.config.build_args}}
 
 
     - name: Build and push release (Accelerated Builds)
@@ -75,3 +87,4 @@ jobs:
         tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}${{matrix.config.tag}}
         context: ${{github.workspace}}
         platforms: ${{matrix.config.platforms}}
+        build-args: ${{matrix.config.build_args}}
