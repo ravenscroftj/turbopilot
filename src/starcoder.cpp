@@ -686,8 +686,6 @@ bool StarcoderModel::load_model(std::string fname) {
 
     #if defined(GGML_USE_CLBLAST) || defined(GGML_USE_CUBLAS)
 
-    printf("inside ggml clblast check\n");
-
     if(config.n_gpu_layers > 0){
         size_t vram_total = 0;
         int gpu_layers = std::min(config.n_gpu_layers, model->hparams.n_layer);
@@ -714,7 +712,7 @@ bool StarcoderModel::load_model(std::string fname) {
             #endif
         }
 
-        fprintf(stderr, "%s: [GPU] total VRAM used: %zu MB\n", __func__, vram_total / 1024 / 1024);
+        spdlog::info("{}: [GPU] total VRAM used: {} MB\n", __func__, vram_total / 1024 / 1024);
     }
     
     #endif // defined(GGML_USE_CLBLAST) || defined(GGML_USE_CUBLAS)
