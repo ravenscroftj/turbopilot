@@ -6,7 +6,7 @@
 
 | Model Name          | RAM Requirement | Direct Download  | HF Project Link |
 |---------------------|-----------------|-----------------|-----------------|
-| StableCode   | ~3GiB        |   [:arrow_down:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/blob/main/stablecode-instruct-alpha-3b.ggmlv1.q4_0.bin)           |   [:hugs:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/)           |
+| StableCode   | ~3GiB        |   [:arrow_down:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/resolve/main/stablecode-instruct-alpha-3b.ggmlv1.q4_0.bin)           |   [:hugs:](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML/)           |
 
 To run in Turbopilot set model type `-m stablecode`
 
