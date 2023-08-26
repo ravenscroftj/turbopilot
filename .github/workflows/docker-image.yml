@@ -96,10 +96,10 @@ jobs:
         context: ${{github.workspace}}
         platforms: ${{matrix.config.platforms}}
         build-args: |
-          EXTRA_DEPS="${{matrix.config.extra_deps}}"
-          CMAKE_ARGS="${{matrix.config.cmake_args}}"
-          BUILD_BASE="${{matrix.config.build_base}}"
-          RUNTIME_BASE="${{matrix.config.runtime_base}}"
+          EXTRA_DEPS=${{matrix.config.extra_deps}}
+          CMAKE_ARGS=${{matrix.config.cmake_args}}
+          BUILD_BASE=${{matrix.config.build_base}}
+          RUNTIME_BASE=${{matrix.config.runtime_base}}
 
 
     - name: Build and push release (Main Latest Build)
