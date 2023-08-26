@@ -59,7 +59,7 @@ jobs:
             build_base: ubuntu:22.04
             runtime_base: ubuntu:22.04
             extra_deps: libclblast-dev
-            cmake_args: DGGML_CLBLAST=On
+            cmake_args: -DGGML_CLBLAST=On
             
 
     steps:
