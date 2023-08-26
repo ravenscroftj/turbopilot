@@ -94,11 +94,14 @@ docker run --gpus=all --rm -it \
   -e THREADS=6 \
   -e MODEL_TYPE=starcoder \
   -e MODEL="/models/santacoder-q4_0.bin" \
+  -e GPU_LAYERS=32 \
   -p 18080:18080 \
-  ghcr.io/ravenscroftj/turbopilot:v0.1.0-cuda11
+  ghcr.io/ravenscroftj/turbopilot:v0.2.0-cuda11-7
 ```
 
-Swap `ghcr.io/ravenscroftj/turbopilot:v0.1.0-cuda11` for `ghcr.io/ravenscroftj/turbopilot:v0.1.0-cuda12` if you are using CUDA 12 or later.
+If you have a big enough GPU then setting `GPU_LAYERS` will allow turbopilot to fully offload computation onto your GPU rather than copying data backwards and forwards, dramatically speeding up inference. 
+
+Swap `ghcr.io/ravenscroftj/turbopilot:v0.1.0-cuda11` for `ghcr.io/ravenscroftj/turbopilot:v0.2.0-cuda12-0` or `ghcr.io/ravenscroftj/turbopilot:v0.2.0-cuda12-2` if you are using CUDA 12.0 or 12.2 respectively.
 
 You will need CUDA 11 or CUDA 12 later to run this container. You should be able to see `/app/turbopilot` listed when you run `nvidia-smi`.
 
@@ -106,6 +109,8 @@ You will need CUDA 11 or CUDA 12 later to run this container. You should be able
 #### Executable and CUDA
 
 As of v0.0.5 a CUDA version of the linux executable is available - it requires that libcublas 11 be installed on the machine - I might build ubuntu debs at some point but for now running in docker may be more convenient if you want to use a CUDA GPU.
+
+You can use GPU offloading via the `--ngl` option.
 
 ### 🌐 Using the API
 
@@ -177,12 +182,7 @@ Should get you something like this:
 
 ## 👉 Known Limitations
 
-Again I want to set expectations around this being a proof-of-concept project. With that in mind. Here are some current known limitations.
-
-As of **v0.0.2**:
-- The models can be quite slow - especially the 6B ones. It can take ~30-40s to make suggestions across 4 CPU cores.
-- I've only tested the system on Ubuntu 22.04 but I am now supplying ARM docker images and soon I'll be providing ARM binary releases.
-- Sometimes suggestions get truncated in nonsensical places - e.g. part way through a variable name or string name. This is due to a hard limit of 2048 on the context length (prompt + suggestion).
+- Currently Turbopilot only supports one GPU device at a time (it will not try to make use of multiple devices).
 
 ## 👏 Acknowledgements
 
