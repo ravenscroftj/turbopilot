@@ -566,7 +566,7 @@ bool GPTJModel::load_model(std::string fname) {
 
 
 
-    //#if defined(GGML_USE_CLBLAST) || defined(GGML_USE_CUBLAS)
+    #if defined(GGML_USE_CLBLAST) || defined(GGML_USE_CUBLAS)
 
     if(config.n_gpu_layers > 0){
         size_t vram_total = 0;
@@ -603,7 +603,7 @@ bool GPTJModel::load_model(std::string fname) {
         spdlog::info("{}: [GPU] total VRAM used: {} MB\n", __func__, vram_total / 1024 / 1024);
     }
     
-    //#endif // defined(GGML_USE_CLBLAST) || defined(GGML_USE_CUBLAS)
+    #endif // defined(GGML_USE_CLBLAST) || defined(GGML_USE_CUBLAS)
 
     return true;
 }
