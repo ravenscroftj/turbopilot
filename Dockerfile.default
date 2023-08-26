@@ -1,17 +1,24 @@
-FROM alpine AS build
+FROM ubuntu:22.04 AS build
 
-RUN apk add --update alpine-sdk boost-dev cmake asio-dev 
+ENV DEBIAN_FRONTEND=noninteractive
 
-ADD ./ /turbopilot/
+# inlude kitware apt repo to allow us to grab latest cmake
+RUN apt-get update && apt-get install -y ca-certificates gpg wget
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+RUN echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null
+
+RUN apt-get update && apt-get install -y build-essential cmake libboost-dev libboost-thread-dev
+
+ADD ./ /turbopilot
 
 RUN mkdir /turbopilot/build
 
 WORKDIR  /turbopilot/build
 
-RUN cmake -D GGML_STATIC=ON ..
+RUN cmake -DGGML_OPENBLAS=ON ..
 RUN make turbopilot
 
-FROM alpine AS runtime
+FROM ubuntu:22.04 AS runtime
 
 
 WORKDIR /app
