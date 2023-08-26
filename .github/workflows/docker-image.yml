@@ -58,6 +58,7 @@ jobs:
             platforms: linux/amd64
             build_base: ubuntu:22.04
             runtime_base: ubuntu:22.04
+            runtime_deps: libclblast1
             extra_deps: libclblast-dev
             cmake_args: -DGGML_CLBLAST=On
             
@@ -100,6 +101,7 @@ jobs:
           CMAKE_ARGS=${{matrix.config.cmake_args}}
           BUILD_BASE=${{matrix.config.build_base}}
           RUNTIME_BASE=${{matrix.config.runtime_base}}
+          RUNTIME_DEPS=${{matrix.config.runtime_deps}}
 
 
     - name: Build and push release (Main Latest Build)

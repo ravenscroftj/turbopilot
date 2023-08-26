@@ -29,6 +29,10 @@ RUN make turbopilot
 
 FROM ${RUNTIME_BASE} AS runtime
 
+ARG RUNTIME_DEPS=""
+
+RUN if [[ -z "${RUNTIME_DEPS}" ]] ; then echo "No runtime libs required" ; else  apt-get update && apt-get install -y ${RUNTIME_DEPS} ; fi
+
 
 WORKDIR /app
 
