@@ -15,7 +15,7 @@ RUN mkdir /turbopilot/build
 
 WORKDIR  /turbopilot/build
 
-RUN cmake -D GGML_STATIC=ON ..
+RUN cmake ..
 RUN make turbopilot
 
 FROM ubuntu:22.04 AS runtime
