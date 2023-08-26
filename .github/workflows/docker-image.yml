@@ -16,48 +16,48 @@ jobs:
     strategy:
       matrix:
         config:
-          - tag: ""
-            dockerfile: "./Dockerfile.default"
-            platforms: "linux/amd64,linux/arm64"
-            build_base: "ubuntu:22.04"
-            runtime_base: "ubuntu:22.04"
+          - tag: 
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64,linux/arm64
+            build_base: ubuntu:22.04
+            runtime_base: ubuntu:22.04
 
 
-          - tag: "-openblas"
-            dockerfile: "./Dockerfile.default"
-            platforms: "linux/amd64,linux/arm64" 
-            build_base: "ubuntu:22.04"
-            runtime_base: "ubuntu:22.04"
-            extra_deps: "libopenblas-dev"
-            cmake_args: "-DGGML_OPENBLAS=On"
+          - tag: -openblas
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64,linux/arm64 
+            build_base: ubuntu:22.04
+            runtime_base: ubuntu:22.04
+            extra_deps: libopenblas-dev
+            cmake_args: -DGGML_OPENBLAS=On
 
             
-          - tag: "-cuda11-7"
-            dockerfile: "./Dockerfile.default"
-            platforms: "linux/amd64"
-            build_base: "nvidia/cuda:11.7.1-devel-ubuntu22.04"
-            runtime_base: "nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04"
-            cmake_args: "-DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc" 
+          - tag: -cuda11-7
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64
+            build_base: nvidia/cuda:11.7.1-devel-ubuntu22.04
+            runtime_base: nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
+            cmake_args: -DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
             
-          - tag: "-cuda12-0"
-            dockerfile: "./Dockerfile.default"
-            platforms: "linux/amd64"
-            build_base: "nvidia/cuda:12.0.0-devel-ubuntu22.04"
-            runtime_base: "nvidia/cuda:12.0.0-runtime-ubuntu22.04"
-            cmake_args: "-DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc" 
+          - tag: -cuda12-0
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64
+            build_base: nvidia/cuda:12.0.0-devel-ubuntu22.04
+            runtime_base: nvidia/cuda:12.0.0-runtime-ubuntu22.04
+            cmake_args: -DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
             
-          - tag: "-cuda12-2"
-            dockerfile: "./Dockerfile.default"
-            platforms: "linux/amd64"
-            build_base: "nvidia/cuda:12.2.0-devel-ubuntu22.04"
-            runtime_base: "nvidia/cuda:12.2.0-runtime-ubuntu22.04"
-            cmake_args: "-DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc" 
+          - tag: -cuda12-2
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64
+            build_base: nvidia/cuda:12.2.0-devel-ubuntu22.04
+            runtime_base: nvidia/cuda:12.2.0-runtime-ubuntu22.04
+            cmake_args: -DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
           
-          - tag: "-clblast"
-            dockerfile: "./Dockerfile.default"
-            platforms: "linux/amd64"
-            build_base: "ubuntu:22.04"
-            runtime_base: "ubuntu:22.04"
+          - tag: -clblast
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64
+            build_base: ubuntu:22.04
+            runtime_base: ubuntu:22.04
             extra_deps: libclblast-dev
             cmake_args: DGGML_CLBLAST=On
             
