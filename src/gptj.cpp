@@ -584,7 +584,9 @@ bool GPTJModel::load_model(std::string fname) {
             layer.c_mlp_proj_w->backend = GGML_BACKEND_GPU;
 
             #if defined(GGML_USE_CLBLAST)
-            ggml_cl_transform_tensor(layer.c_attn_attn_w->data,layer.c_attn_attn_w); vram_total += ggml_nbytes(layer.c_attn_attn_w);
+            ggml_cl_transform_tensor(layer.c_attn_q_proj_w->data,layer.c_attn_q_proj_w); vram_total += ggml_nbytes(layer.c_attn_q_proj_w);
+            ggml_cl_transform_tensor(layer.c_attn_k_proj_w->data,layer.c_attn_k_proj_w); vram_total += ggml_nbytes(layer.c_attn_k_proj_w);
+            ggml_cl_transform_tensor(layer.c_attn_v_proj_w->data,layer.c_attn_v_proj_w); vram_total += ggml_nbytes(layer.c_attn_v_proj_w);
             ggml_cl_transform_tensor(layer.c_attn_proj_w->data,layer.c_attn_proj_w); vram_total += ggml_nbytes(layer.c_attn_proj_w);
             ggml_cl_transform_tensor(layer.c_mlp_fc_w->data,layer.c_mlp_fc_w); vram_total += ggml_nbytes(layer.c_mlp_fc_w);
             ggml_cl_transform_tensor(layer.c_mlp_proj_w->data,layer.c_mlp_proj_w); vram_total += ggml_nbytes(layer.c_mlp_proj_w);
