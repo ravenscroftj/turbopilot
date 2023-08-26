@@ -1,6 +1,6 @@
 [submodule "ggml"]
 	path = extern/ggml
-	url = git@github.com:ravenscroftj/ggml.git
+	url = git@github.com:ggerganov/ggml.git
 [submodule "extern/argparse"]
 	path = extern/argparse
 	url = https://github.com/p-ranav/argparse.git
