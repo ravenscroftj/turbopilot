@@ -84,20 +84,21 @@ bool gpt_neox_eval(
     const int n_vocab = hparams.n_vocab;
     const int n_rot   = hparams.n_rot;
 
-    static size_t buf_size = 256u*1024*1024;
+    static size_t buf_size = 512u*1024*1024;
     static void * buf = malloc(buf_size);
 
     // use 2 scratch buffers
     // TODO: very hacky solution - reimplement in a more elegant way
-    static size_t scr0_size = 256u*1024*1024;
+    static size_t scr0_size = 512*1024*1024;
     static void * scr0 = malloc(scr0_size);
 
-    static size_t scr1_size = 256u*1024*1024;
+    static size_t scr1_size = 512*1024*1024;
     static void * scr1 = malloc(scr1_size);
+    
 
-    if (mem_per_token > 0 && mem_per_token*N > buf_size) {
+    if (mem_per_token > 0 && (mem_per_token*N) > buf_size) {
         const size_t buf_size_new = 1.1*(mem_per_token*N); // add 10% to account for ggml object overhead
-        //printf("\n%s: reallocating buffer from %zu to %zu bytes\n", __func__, buf_size, buf_size_new);
+        spdlog::debug("{}: reallocating buffer from {} to {} bytes\n", __func__, buf_size, buf_size_new);
 
         
         // reallocate
@@ -107,8 +108,6 @@ bool gpt_neox_eval(
             fprintf(stderr, "%s: failed to allocate %zu bytes\n", __func__, buf_size);
             return false;
         }
-
-        spdlog::debug("{}: reallocating context buffer {} -> now {} bytes of tokens in prompt = {}", __func__, buf_size, buf_size_new);
     }
 
     struct ggml_init_params params = {
@@ -303,12 +302,14 @@ bool gpt_neox_eval(
     embd_w.resize(n_vocab);
     memcpy(embd_w.data(), (float *) ggml_get_data(inpL) + (n_vocab*(N-1)), sizeof(float)*n_vocab);
 
+
+    spdlog::debug("used_mem = {}\n", ggml_used_mem(ctx0));
+
     if (mem_per_token == 0) {
-        mem_per_token = ggml_used_mem(ctx0)/N;
+        mem_per_token = ggml_used_mem(ctx0) /  N; //* 4;
+        spdlog::debug("Set mem_per_token={} / {} * {} = {}", ggml_used_mem(ctx0), N, 4, mem_per_token);
         
     }
-    spdlog::debug("used_mem = {}\n", ggml_used_mem(ctx0));
-    //printf("used_mem = %zu\n", ggml_used_mem(ctx0));
 
     ggml_free(ctx0);
 
@@ -685,7 +686,13 @@ std::stringstream GPTNEOXModel::predict_impl(std::string prompt, int max_length,
 
     std::vector<float> logits;
 
-    gpt_neox_eval((*model), config.n_threads, 0, { 0, 1, 2, 3 }, logits, mem_per_token);
+    std::vector<gpt_vocab::id> test = {};
+
+    for(int i=0;i<64;i++){
+        test.push_back(i);
+    }
+
+    gpt_neox_eval((*model), config.n_threads, 0, test, logits, mem_per_token);
 
     const int64_t t_start_us = ggml_time_us();
 

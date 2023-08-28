@@ -37,7 +37,7 @@ bool starcoder_eval(
     const int n_head  = hparams.n_head;
     const int n_vocab = hparams.n_vocab;
 
-    static size_t buf_size = 256u*1024*1024;
+    static size_t buf_size = 512u*1024*1024;
     static void * buf = malloc(buf_size);
 
     // use 2 scratch buffers
@@ -48,17 +48,21 @@ bool starcoder_eval(
     static size_t scr1_size = 512u*1024*1024;
     static void * scr1 = malloc(scr1_size);
 
-    if (mem_per_token > 0 && mem_per_token*N > buf_size) {
-        const size_t buf_size_new = 1.1*(mem_per_token*N); // add 10% to account for ggml object overhead
-        spdlog::debug("{}: reallocating buffer from {} to {} bytes\n", __func__, buf_size, buf_size_new);
+    if (mem_per_token > 0 && 2*mem_per_token*N > buf_size) {
+        const size_t buf_size_new = 2*(mem_per_token*N); // add 10% to account for ggml object overhead
 
-        // reallocate
-        buf_size = buf_size_new;
-        buf = realloc(buf, buf_size);
-        if (buf == nullptr) {
-            spdlog::error("{}: failed to allocate {} bytes\n", __func__, buf_size);
-            return false;
+        if(buf_size_new > buf_size){
+            spdlog::debug("{}: reallocating buffer from {} to {} bytes\n", __func__, buf_size, buf_size_new);
+
+            // reallocate
+            buf_size = buf_size_new;
+            buf = realloc(buf, buf_size);
+            if (buf == nullptr) {
+                spdlog::error("{}: failed to allocate {} bytes\n", __func__, buf_size);
+                return false;
+            } 
         }
+
     }
 
     struct ggml_init_params params = {
@@ -66,6 +70,7 @@ bool starcoder_eval(
         /*.mem_buffer =*/ buf,
         /*.no_alloc   =*/ false,
     };
+
 
     struct ggml_context * ctx0 = ggml_init(params);
     struct ggml_cgraph gf = {};
@@ -338,7 +343,9 @@ bool starcoder_eval(
     if (mem_per_token == 0) {
         mem_per_token = ggml_used_mem(ctx0)/N;
     }
-    //printf("used_mem = %zu MB\n", ggml_used_mem(ctx0)/(1024*1024));
+
+    spdlog::debug("{}: used mem buf={} bytes", __func__, ggml_used_mem(ctx0));
+    
 
     ggml_free(ctx0);
 
@@ -743,11 +750,22 @@ std::stringstream StarcoderModel::predict_impl(std::string prompt, int max_lengt
     size_t mem_per_token = 0;
 
     std::vector<float> logits;
+        std::vector<gpt_vocab::id> test = {};
 
-    starcoder_eval((*model), config.n_threads, 0, { 0, 1, 2, 3 }, logits, mem_per_token);
+    for(int i=0;i<64;i++){
+        test.push_back(i);
+    }
+
+    spdlog::debug("{}: calculate required memory per token", __func__);
+    starcoder_eval((*model), config.n_threads, 0, test, logits, mem_per_token);
+    spdlog::debug("{}: mem_per_token={}", __func__, mem_per_token);
+    spdlog::debug("{}: total mem needed for prompt = {}*{}={}", __func__, embd_inp.size(), mem_per_token, embd_inp.size()*mem_per_token);
+
 
     for (int i = embd.size(); i < embd_inp.size() + n_predict; i++) {
         // predict
+        spdlog::debug("{}: process token #{}: ", __func__, i);
+
         if (embd.size() > 0) {
             const int64_t t_start_us = ggml_time_us();
 
