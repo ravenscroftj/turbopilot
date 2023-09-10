@@ -1,22 +1,42 @@
-FROM alpine AS build
+ARG BUILD_BASE="ubuntu:22.04"
+ARG RUNTIME_BASE="ubuntu:22.04"
 
-RUN apk add --update alpine-sdk boost-dev cmake
+FROM ${BUILD_BASE} AS build
 
-ADD ./ggml /build/ggml
+ARG EXTRA_DEPS=""
+ARG CMAKE_ARGS=""
 
-RUN mkdir /build/ggml/build
+RUN echo "CMAKE_ARGS: ${CMAKE_ARGS}"
+RUN echo "EXTRA_DEPS: ${EXTRA_DEPS}"
 
-WORKDIR  /build/ggml/build
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN cmake -D GGML_STATIC=ON ..
-RUN make codegen-serve
+# inlude kitware apt repo to allow us to grab latest cmake
+RUN apt-get update && apt-get install -y ca-certificates gpg wget
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+RUN echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null
 
-FROM alpine AS runtime
+RUN apt-get update && apt-get install -y build-essential cmake libboost-dev libboost-thread-dev ${EXTRA_DEPS}
+
+ADD ./ /turbopilot
+
+RUN mkdir /turbopilot/build
+
+WORKDIR  /turbopilot/build
+
+RUN cmake .. ${CMAKE_ARGS}
+RUN make turbopilot
+
+FROM ${RUNTIME_BASE} AS runtime
+
+ARG RUNTIME_DEPS=""
+
+RUN if [[ -z "${RUNTIME_DEPS}" ]] ; then echo "No runtime libs required" ; else  apt-get update && apt-get install -y ${RUNTIME_DEPS} ; fi
 
 
 WORKDIR /app
 
-COPY --from=build /build/ggml/build/bin/codegen-serve /app/codegen-serve
+COPY --from=build /turbopilot/build/bin/turbopilot /app/turbopilot
 
 ENV THREADS=4
 

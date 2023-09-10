@@ -32,24 +32,18 @@ Make sure the ggml subproject is checked out with `git submodule init` and `git 
 Configure cmake to build the project with the following:
 
 ```bash
-mkdir ggml/build
-cd ggml/build
+mkdir build
+cd build
 cmake ..
 ```
 
 If you are running on linux you can optionally compile a static build with `cmake -D CMAKE_EXE_LINKER_FLAGS="-static" ..` which should make your binary portable across different flavours of the OS.
 
-From here you can now build the components that make up turbopilot:
+From here you can now build the components that make up turbopilot by running:
 
 ```bash
-make codegen codegen-quantize codegen-serve
+make
 ```
-
-Where:
-
-- *codegen* is a command line tool for testing out prompts in a lightweight way (a lot like llama.cpp)
-- *codegen-serve* is the actual REST server that can be used to connect to VSCode
-- *codegen-quantize* is the tool for quantizing models exported by the conversion script. For more details see [Converting and Quantizing The Models](https://github.com/ravenscroftj/turbopilot/wiki/Converting-and-Quantizing-The-Models).
 
 ### Building with OpenBLAS
 

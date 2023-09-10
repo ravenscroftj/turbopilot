@@ -9,8 +9,11 @@ TurboPilot is a self-hosted [copilot](https://github.com/features/copilot) clone
 
 ![a screen recording of turbopilot running through fauxpilot plugin](assets/vscode-status.gif)
 
+**✨ Now Supports [StableCode 3B Instruct](https://huggingface.co/stabilityai/stablecode-instruct-alpha-3b)** simply use [TheBloke's Quantized GGML models](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML) and set `-m stablecode`.
 
-**NEW:** As of v0.0.5 turbopilot supports cuda inference which greatly accelerates suggestions when working with longer prompts (i.e. longer existing code files).
+**✨ New: Refactored + Simplified**: The source code has been improved to make it easier to extend and add new models to Turbopilot. The system now supports multiple flavours of model
+
+**✨ New: Wizardcoder, Starcoder, Santacoder support** - Turbopilot now supports state of the art local code completion models which provide more programming languages and "fill in the middle" support.
 
 ## 🤝 Contributing
 
@@ -23,6 +26,7 @@ Make a fork, make your changes and then open a [PR](https://github.com/ravenscro
 
 The easiest way to try the project out is to grab the pre-processed models and then run the server in docker.
 
+
 ### Getting The Models
 
 You have 2 options for getting the model
@@ -31,20 +35,11 @@ You have 2 options for getting the model
 
 You can download the pre-converted, pre-quantized models from Huggingface.
 
-The `multi` flavour models can provide auto-complete suggestions for `C`, `C++`, `Go`, `Java`, `JavaScript`, and `Python`.
+For low RAM users (4-8 GiB), I recommend [StableCode](https://huggingface.co/TheBloke/stablecode-instruct-alpha-3b-GGML) and for high power users (16+ GiB RAM, discrete GPU or apple silicon) I recomnmend [WizardCoder](https://huggingface.co/TheBloke/WizardCoder-15B-1.0-GGML/resolve/main/WizardCoder-15B-1.0.ggmlv3.q4_0.bin).
 
-The `mono` flavour models can provide auto-complete suggestions for `Python` only (but the quality of Python-specific suggestions may be higher).
+Turbopilot still supports the first generation codegen models from `v0.0.5` and earlier builds. Although old models do need to be requantized.
 
-Pre-converted and pre-quantized models are available for download from here:
-
-| Model Name          | RAM Requirement | Supported Languages       | Direct Download  | HF Project Link |
-|---------------------|-----------------|---------------------------|-----------------|-----------------|
-| CodeGen 350M multi   | ~800MiB        | `C`, `C++`, `Go`, `Java`, `JavaScript`, `Python`  |   [:arrow_down:](https://huggingface.co/ravenscroftj/CodeGen-350M-multi-ggml-quant/resolve/main/codegen-350M-multi-ggml-4bit-quant.bin)           |   [:hugs:](https://huggingface.co/ravenscroftj/CodeGen-350M-multi-ggml-quant)           |
-| CodeGen 350M mono   | ~800MiB   | `Python`          |   [:arrow_down:](https://huggingface.co/Guglielmo/CodeGen-350M-mono-ggml-quant/resolve/main/ggml-model-quant.bin)           |   [:hugs:](https://huggingface.co/Guglielmo/CodeGen-350M-mono-ggml-quant)           |
-| CodeGen 2B multi   | ~4GiB  | `C`, `C++`, `Go`, `Java`, `JavaScript`, `Python`          |   [:arrow_down:](https://huggingface.co/ravenscroftj/CodeGen-2B-multi-ggml-quant/resolve/main/codegen-2B-multi-ggml-4bit-quant.bin)           |   [:hugs:](https://huggingface.co/ravenscroftj/CodeGen-2B-multi-ggml-quant)          |
-| CodeGen 2B mono   | ~4GiB  | `Python`          |   [:arrow_down:](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant/resolve/main/ggml-model-quant.bin)           |   [:hugs:](https://huggingface.co/Guglielmo/CodeGen-2B-mono-ggml-quant/)          |
-| CodeGen 6B multi   | ~8GiB  | `C`, `C++`, `Go`, `Java`, `JavaScript`, `Python`          |   [:arrow_down:](https://huggingface.co/ravenscroftj/CodeGen-6B-multi-ggml-quant/resolve/main/codegen-6B-multi-ggml-4bit-quant.bin)           |   [:hugs:](https://huggingface.co/ravenscroftj/CodeGen-6B-multi-ggml-quant)          |
-| CodeGen 6B mono   | ~8GiB  | `Python`          |   [:arrow_down:](https://huggingface.co/Guglielmo/CodeGen-6B-mono-ggml-quant/resolve/main/ggml-model-quant.bin)           |   [:hugs:](https://huggingface.co/Guglielmo/CodeGen-6B-mono-ggml-quant/)          |
+You can find a full catalogue of models in [MODELS.md](MODELS.md).
 
 
 #### Option B: Convert The Models Yourself - Hard, More Flexible
@@ -58,16 +53,20 @@ Download the [latest binary](https://github.com/ravenscroftj/turbopilot/releases
 Run:
 
 ```bash
-./codegen-serve -m ./models/codegen-6B-multi-ggml-4bit-quant.bin
+./turbopilot -m starcoder -f ./models/santacoder-q4_0.bin
 ```
 
-The application should start a server on port `18080`
+The application should start a server on port `18080`, you can change this with the `-p` option but this is the default port that vscode-fauxpilot tries to connect to so you probably want to leave this alone unless you are sure you know what you're doing.
 
 If you have a multi-core system you can control how many CPUs are used with the `-t` option - for example, on my AMD Ryzen 5000 which has 6 cores/12 threads I use:
 
 ```bash
-./codegen-serve -t 6 -m ./models/codegen-6B-multi-ggml-4bit-quant.bin
+./codegen-serve -t 6 -m starcoder -f ./models/santacoder-q4_0.bin
 ```
+
+To run the legacy codegen models. Just change the model type flag `-m` to `codegen` instead.
+
+**NOTE: Turbopilot 0.1.0 and newer re-quantize your codegen models old models from v0.0.5 and older. I am working on providing updated quantized codegen models**
 
 ### 📦 Running From Docker
 
@@ -79,7 +78,8 @@ You will still need to download the models separately, then you can run:
 docker run --rm -it \
   -v ./models:/models \
   -e THREADS=6 \
-  -e MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin" \
+  -e MODEL_TYPE=starcoder \
+  -e MODEL="/models/santacoder-q4_0.bin" \
   -p 18080:18080 \
   ghcr.io/ravenscroftj/turbopilot:latest
 ```
@@ -92,17 +92,25 @@ As of release v0.0.5 turbocode now supports CUDA inference. In order to run the 
 docker run --gpus=all --rm -it \
   -v ./models:/models \
   -e THREADS=6 \
-  -e MODEL="/models/codegen-2B-multi-ggml-4bit-quant.bin" \
+  -e MODEL_TYPE=starcoder \
+  -e MODEL="/models/santacoder-q4_0.bin" \
+  -e GPU_LAYERS=32 \
   -p 18080:18080 \
-  ghcr.io/ravenscroftj/turbopilot:v0.0.5-cuda
+  ghcr.io/ravenscroftj/turbopilot:v0.2.0-cuda11-7
 ```
 
-You will need CUDA 11 or later to run this container. You should be able to see `/app/codegen-serve` listed when you run `nvidia-smi`.
+If you have a big enough GPU then setting `GPU_LAYERS` will allow turbopilot to fully offload computation onto your GPU rather than copying data backwards and forwards, dramatically speeding up inference. 
+
+Swap `ghcr.io/ravenscroftj/turbopilot:v0.1.0-cuda11` for `ghcr.io/ravenscroftj/turbopilot:v0.2.0-cuda12-0` or `ghcr.io/ravenscroftj/turbopilot:v0.2.0-cuda12-2` if you are using CUDA 12.0 or 12.2 respectively.
+
+You will need CUDA 11 or CUDA 12 later to run this container. You should be able to see `/app/turbopilot` listed when you run `nvidia-smi`.
 
 
 #### Executable and CUDA
 
 As of v0.0.5 a CUDA version of the linux executable is available - it requires that libcublas 11 be installed on the machine - I might build ubuntu debs at some point but for now running in docker may be more convenient if you want to use a CUDA GPU.
+
+You can use GPU offloading via the `--ngl` option.
 
 ### 🌐 Using the API
 
@@ -174,12 +182,7 @@ Should get you something like this:
 
 ## 👉 Known Limitations
 
-Again I want to set expectations around this being a proof-of-concept project. With that in mind. Here are some current known limitations.
-
-As of **v0.0.2**:
-- The models can be quite slow - especially the 6B ones. It can take ~30-40s to make suggestions across 4 CPU cores.
-- I've only tested the system on Ubuntu 22.04 but I am now supplying ARM docker images and soon I'll be providing ARM binary releases.
-- Sometimes suggestions get truncated in nonsensical places - e.g. part way through a variable name or string name. This is due to a hard limit of 2048 on the context length (prompt + suggestion).
+- Currently Turbopilot only supports one GPU device at a time (it will not try to make use of multiple devices).
 
 ## 👏 Acknowledgements
 

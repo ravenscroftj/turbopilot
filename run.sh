@@ -1,3 +1,6 @@
 #!/bin/sh
-
-/app/codegen-serve -t $THREADS -m $MODEL -b $BATCHSIZE
+if [ -z "$GPU_LAYERS" ]; then 
+    /app/turbopilot -t $THREADS -m $MODEL_TYPE -f $MODEL 
+else
+    /app/turbopilot -t $THREADS -m $MODEL_TYPE -f $MODEL --ngl $GPU_LAYERS
+fi

@@ -16,8 +16,52 @@ jobs:
     strategy:
       matrix:
         config:
-          - {tag: "", dockerfile: "./Dockerfile.default"}
-          - {tag: "-cuda", dockerfile: "./Dockerfile.cuda"}
+          - tag: 
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64,linux/arm64
+            build_base: ubuntu:22.04
+            runtime_base: ubuntu:22.04
+
+
+          - tag: -openblas
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64,linux/arm64 
+            build_base: ubuntu:22.04
+            runtime_base: ubuntu:22.04
+            extra_deps: libopenblas-dev
+            cmake_args: -DGGML_OPENBLAS=On
+
+            
+          - tag: -cuda11-7
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64
+            build_base: nvidia/cuda:11.7.1-devel-ubuntu22.04
+            runtime_base: nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
+            cmake_args: -DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
+            
+          - tag: -cuda12-0
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64
+            build_base: nvidia/cuda:12.0.0-devel-ubuntu22.04
+            runtime_base: nvidia/cuda:12.0.0-runtime-ubuntu22.04
+            cmake_args: -DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
+            
+          - tag: -cuda12-2
+            dockerfile: ./Dockerfile.default
+            platforms: linux/amd64
+            build_base: nvidia/cuda:12.2.0-devel-ubuntu22.04
+            runtime_base: nvidia/cuda:12.2.0-runtime-ubuntu22.04
+            cmake_args: -DGGML_CUBLAS=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
+          
+          # - tag: -clblast
+          #   dockerfile: ./Dockerfile.default
+          #   platforms: linux/amd64
+          #   build_base: ubuntu:22.04
+          #   runtime_base: ubuntu:22.04
+          #   runtime_deps: libclblast1
+          #   extra_deps: libclblast-dev
+          #   cmake_args: -DGGML_CLBLAST=On
+            
 
     steps:
     
@@ -44,17 +88,23 @@ jobs:
         password: ${{ secrets.GH_TOKEN }}
 
     - name: Build and push incremental
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v4.1.1
       if: (!startsWith(github.ref, 'refs/tags/'))
       with:
         file: ${{matrix.config.dockerfile}}
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot:nightly${{matrix.config.tag}}-${{ github.sha }}
         context: ${{github.workspace}}
-        platforms: linux/amd64,linux/arm64
+        platforms: ${{matrix.config.platforms}}
+        build-args: |
+          EXTRA_DEPS=${{matrix.config.extra_deps}}
+          CMAKE_ARGS=${{matrix.config.cmake_args}}
+          BUILD_BASE=${{matrix.config.build_base}}
+          RUNTIME_BASE=${{matrix.config.runtime_base}}
+          RUNTIME_DEPS=${{matrix.config.runtime_deps}}
 
 
-    - name: Build and push release
+    - name: Build and push release (Main Latest Build)
       uses: docker/build-push-action@v4
       if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag == ''
       with:
@@ -62,15 +112,27 @@ jobs:
         push: true
         tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}, ghcr.io/ravenscroftj/turbopilot:latest
         context: ${{github.workspace}}
-        platforms: linux/amd64,linux/arm64  
+        platforms: ${{matrix.config.platforms}} 
+        build-args: |
+          EXTRA_DEPS=${{matrix.config.extra_deps}}
+          CMAKE_ARGS=${{matrix.config.cmake_args}}
+          BUILD_BASE=${{matrix.config.build_base}}
+          RUNTIME_BASE=${{matrix.config.runtime_base}}
+          RUNTIME_DEPS=${{matrix.config.runtime_deps}}
 
 
-    - name: Build and push release (CUDA)
+    - name: Build and push release (Accelerated Builds)
       uses: docker/build-push-action@v4
       if: startsWith(github.ref, 'refs/tags/') && matrix.config.tag != ''
       with:
         file: ${{matrix.config.dockerfile}}
         push: true
-        tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}
+        tags: ghcr.io/ravenscroftj/turbopilot:${{ github.ref_name }}${{matrix.config.tag}}
         context: ${{github.workspace}}
-        platforms: linux/amd64,linux/arm64  
+        platforms: ${{matrix.config.platforms}}
+        build-args: |
+          EXTRA_DEPS=${{matrix.config.extra_deps}}
+          CMAKE_ARGS=${{matrix.config.cmake_args}}
+          BUILD_BASE=${{matrix.config.build_base}}
+          RUNTIME_BASE=${{matrix.config.runtime_base}}
+          RUNTIME_DEPS=${{matrix.config.runtime_deps}}

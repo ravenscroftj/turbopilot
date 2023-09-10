@@ -1,0 +1,70 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch TBP",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/james/workspace/rafael-llm/turbopilot/build/bin/turbopilot",
+            "args": [
+                //TBP ARGS
+                "-v",
+                "-f",
+                "/home/james/Downloads/replit-code-v1-3b-q4_0.bin",
+                "-m",
+                "replit",
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(gdb) Launch Replut",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/james/workspace/rafael-llm/turbopilot/extern/ggml/build/bin/replit",
+            "args": [
+                // REPLIT ARGS
+                "-m",
+                "/home/james/Downloads/replit-code-v1-3b-q4_0.bin",
+                "-f",
+                "/home/james/workspace/rafael-llm/turbopilot/test.txt"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+    ]
+}
