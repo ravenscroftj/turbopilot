@@ -1,5 +1,10 @@
 # TurboPilot 🚀
 
+## Turbopilot is deprecated/archived as of 30/9/23. There are other mature solutions that meet the community's needs better. Please read [my blog post](https://brainsteam.co.uk/posts/2023/09/30/turbopilot-obit/) about my decision to down tools and for recommended alternatives.
+
+
+-----------------------------------
+
 [![Mastodon Follow](https://img.shields.io/mastodon/follow/000117012?domain=https%3A%2F%2Ffosstodon.org%2F&style=social)](https://fosstodon.org/@jamesravey) ![BSD Licensed](https://img.shields.io/github/license/ravenscroftj/turbopilot) ![Time Spent](https://img.shields.io/endpoint?url=https://wakapi.nopro.be/api/compat/shields/v1/jamesravey/all_time/label%3Aturbopilot)
 
 
