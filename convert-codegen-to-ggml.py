@@ -171,10 +171,10 @@ for name in list_vars.keys():
         print("  Skipping variable: " + name)
         continue
 
-    n_dims = len(data.shape);
+    n_dims = len(data.shape)
 
     # ftype == 0 -> float32, ftype == 1 -> float16
-    ftype_cur = 0;
+    ftype_cur = 0
     if ftype != 0:
         if name[-7:] == ".weight" and n_dims == 2:
             print("  Converting to float16")
@@ -211,7 +211,7 @@ for name in list_vars.keys():
     fout.write(struct.pack("iii", n_dims, len(str), ftype_cur))
     for i in range(n_dims):
         fout.write(struct.pack("i", data.shape[n_dims - 1 - i]))
-    fout.write(str);
+    fout.write(str)
 
     # data
     data.tofile(fout)
